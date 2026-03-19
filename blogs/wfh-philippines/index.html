@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>How Filipino Workers Lost WFH — Sentiment Analysis | tomatamagotato</title>
+  <meta name="description" content="An interactive analysis of Filipino sentiment on Work From Home — from pandemic adaptation to strategic resignation.">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --surface-hover: #1c2129;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #ff6b6b;
+      --accent2: #ffd93d;
+      --accent3: #6bcb77;
+      --accent4: #4d96ff;
+      --accent5: #c084fc;
+      --link: #58a6ff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 17px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 60px 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(ellipse at 30% 50%, rgba(255,107,107,0.08) 0%, transparent 50%),
+                  radial-gradient(ellipse at 70% 50%, rgba(77,150,255,0.06) 0%, transparent 50%);
+      animation: drift 20s ease-in-out infinite alternate;
+    }
+
+    @keyframes drift {
+      from { transform: translate(0, 0); }
+      to { transform: translate(-3%, 2%); }
+    }
+
+    .hero-content { position: relative; z-index: 1; max-width: 800px; }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 24px;
+      letter-spacing: -0.02em;
+    }
+
+    .hero h1 .highlight {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin: 0 auto 40px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat .num {
+      display: block;
+      font-size: 2rem;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .hero-stat .label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--text-muted);
+      font-size: 13px;
+      animation: bounce 2s infinite;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ── Navigation ── */
+    .toc-bar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,17,23,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+      transition: box-shadow 0.3s;
+    }
+
+    .toc-bar.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,0.3); }
+
+    .toc-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 12px 0;
+    }
+
+    .toc-inner::-webkit-scrollbar { display: none; }
+
+    .toc-home {
+      font-weight: 700;
+      font-size: 14px;
+      color: var(--text);
+      text-decoration: none;
+      white-space: nowrap;
+      padding-right: 12px;
+      border-right: 1px solid var(--border);
+      margin-right: 4px;
+    }
+
+    .toc-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 13px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .toc-link:hover { color: var(--text); background: var(--surface); }
+    .toc-link.active { color: var(--accent); background: rgba(255,107,107,0.1); }
+
+    /* ── Content ── */
+    .content {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 80px 24px;
+    }
+
+    .section {
+      margin-bottom: 80px;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-number {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin: 32px 0 12px;
+      color: var(--text);
+    }
+
+    p { margin-bottom: 16px; color: var(--text); }
+
+    strong { color: #fff; font-weight: 600; }
+
+    /* ── Stat Cards ── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent);
+    }
+
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: 800;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .stat-card .desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Timeline ── */
+    .timeline {
+      position: relative;
+      padding-left: 32px;
+      margin: 32px 0;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+
+    .timeline-item {
+      position: relative;
+      margin-bottom: 32px;
+      cursor: pointer;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -32px;
+      top: 4px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg);
+      transition: all 0.3s;
+    }
+
+    .timeline-item:hover .timeline-dot,
+    .timeline-item.open .timeline-dot {
+      border-color: var(--accent);
+      background: var(--accent);
+      box-shadow: 0 0 12px rgba(255,107,107,0.4);
+    }
+
+    .timeline-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 6px;
+    }
+
+    .timeline-year {
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    .timeline-title {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+
+    .timeline-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, opacity 0.3s ease;
+      opacity: 0;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .timeline-item.open .timeline-body {
+      max-height: 500px;
+      opacity: 1;
+    }
+
+    .timeline-toggle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      display: inline-block;
+    }
+
+    /* ── Blame Hierarchy ── */
+    .blame-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .blame-bar {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+
+    .blame-bar:hover { border-color: var(--accent); }
+
+    .blame-bar .fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      border-radius: 12px 0 0 12px;
+      opacity: 0.1;
+      transition: width 1s ease;
+      width: 0;
+    }
+
+    .blame-bar.animated .fill { width: var(--width); }
+
+    .blame-bar .rank {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-right: 16px;
+      float: left;
+      line-height: 1;
+    }
+
+    .blame-bar .name {
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 4px;
+    }
+
+    .blame-bar .detail {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .blame-bar.expanded .detail {
+      max-height: 400px;
+    }
+
+    /* ── Quote Blocks ── */
+    .quote {
+      border-left: 3px solid var(--accent);
+      padding: 16px 24px;
+      margin: 24px 0;
+      background: var(--surface);
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    .quote .source {
+      display: block;
+      margin-top: 8px;
+      font-style: normal;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      opacity: 0.7;
+    }
+
+    /* ── Collapsible Abuse Cards ── */
+    .abuse-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .abuse-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.3s;
+    }
+
+    .abuse-card:hover { border-color: var(--accent2); }
+
+    .abuse-card-header {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .abuse-icon {
+      font-size: 1.5rem;
+      width: 40px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+
+    .abuse-card-header h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .abuse-card-header .chevron {
+      margin-left: auto;
+      transition: transform 0.3s;
+      color: var(--text-muted);
+    }
+
+    .abuse-card.open .abuse-card-header .chevron {
+      transform: rotate(180deg);
+    }
+
+    .abuse-card-body {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease;
+    }
+
+    .abuse-card.open .abuse-card-body {
+      max-height: 500px;
+    }
+
+    .abuse-card-body-inner {
+      padding: 0 20px 20px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* ── Horizontal Bar Chart ── */
+    .bar-chart {
+      margin: 32px 0;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      gap: 12px;
+    }
+
+    .bar-label {
+      width: 120px;
+      font-size: 0.85rem;
+      text-align: right;
+      flex-shrink: 0;
+      color: var(--text-muted);
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 28px;
+      background: var(--surface);
+      border-radius: 6px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 6px;
+      transition: width 1.2s ease;
+      width: 0;
+      display: flex;
+      align-items: center;
+      padding-left: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .bar-track.animated .bar-fill { width: var(--w); }
+
+    /* ── Cultural Terms ── */
+    .term-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .term-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+    }
+
+    .term-word {
+      font-weight: 800;
+      font-size: 1.1rem;
+      margin-bottom: 4px;
+    }
+
+    .term-word .pron {
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-left: 8px;
+    }
+
+    .term-def {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Callout Box ── */
+    .callout {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 32px 0;
+      background: var(--surface);
+    }
+
+    .callout.warning { border-left: 4px solid var(--accent2); }
+    .callout.info { border-left: 4px solid var(--accent4); }
+
+    .callout-title {
+      font-weight: 700;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .callout.warning .callout-title { color: var(--accent2); }
+    .callout.info .callout-title { color: var(--accent4); }
+
+    .callout p { font-size: 0.95rem; color: var(--text-muted); margin-bottom: 0; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    footer a { color: var(--link); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .hero { min-height: 70vh; padding: 40px 20px; }
+      .hero-stats { gap: 20px; }
+      .hero-stat .num { font-size: 1.5rem; }
+      h2 { font-size: 1.4rem; }
+      .content { padding: 48px 16px; }
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .abuse-grid { grid-template-columns: 1fr; }
+      .bar-label { width: 80px; font-size: 0.75rem; }
+      .blame-bar .rank { font-size: 1.4rem; }
+      .toc-home { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Hero ── -->
+<section class="hero">
+  <div class="hero-content">
+    <span class="hero-badge">Sentiment Analysis Report</span>
+    <h1>How Filipino Workers <span class="highlight">Lost WFH</span> — and Who They Blame</h1>
+    <p class="hero-sub">An analysis of grassroots sentiment across Reddit, Twitter/X, Facebook, and TikTok — tracing five years of pandemic hope, political fury, and strategic resignation.</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="num" style="color: var(--accent)">1.7M</span>
+        <span class="label">BPO Workers</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num" style="color: var(--accent2)">$35B</span>
+        <span class="label">Annual Revenue</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num" style="color: var(--accent3)">78%</span>
+        <span class="label">Want Remote/Hybrid</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num" style="color: var(--accent4)">4hrs</span>
+        <span class="label">Avg Daily Commute</span>
+      </div>
+    </div>
+  </div>
+  <a class="scroll-hint" href="#timeline">↓ Scroll to explore</a>
+</section>
+
+<!-- ── Sticky TOC ── -->
+<nav class="toc-bar" id="tocBar">
+  <div class="toc-inner">
+    <a class="toc-home" href="/">🍅 tomatamagotato</a>
+    <a class="toc-link" href="#timeline">Timeline</a>
+    <a class="toc-link" href="#blame">Blame Hierarchy</a>
+    <a class="toc-link" href="#abuse">Abuse Stories</a>
+    <a class="toc-link" href="#bpo">BPO Ground Zero</a>
+    <a class="toc-link" href="#commute">Commute Crisis</a>
+    <a class="toc-link" href="#culture">Cultural Fault Lines</a>
+    <a class="toc-link" href="#data">The Numbers</a>
+    <a class="toc-link" href="#conclusion">Conclusion</a>
+  </div>
+</nav>
+
+<!-- ── Content ── -->
+<main class="content">
+
+  <!-- INTRO -->
+  <div class="section" id="intro">
+    <p>The dominant Filipino sentiment on Work From Home is unambiguous: <strong>workers overwhelmingly want it back</strong>, and they point fingers at a three-headed villain — government fiscal policy, corporate real estate interests, and a minority of colleagues who abused the arrangement.</p>
+    <p>What makes the Philippine WFH debate distinct from its Western counterpart is the central role of <strong>PEZA</strong> (Philippine Economic Zone Authority) and <strong>FIRB</strong> (Fiscal Incentives Review Board) in forcing the BPO industry back into offices to preserve tax incentives originally designed for physical economic zones. This policy reality means that even employers who wanted to maintain WFH were structurally compelled to mandate return-to-office, creating an unusual dynamic where workers directed their anger at government and real estate interests rather than primarily at their own companies.</p>
+  </div>
+
+  <!-- TIMELINE -->
+  <div class="section" id="timeline">
+    <div class="section-number">01</div>
+    <h2>Five Phases of a Sentiment Rollercoaster</h2>
+    <p>Filipino WFH sentiment moved through distinct emotional phases since 2020 — an arc of <strong>necessity → enthusiasm → fury → blame → strategic resignation</strong>.</p>
+
+    <div class="timeline">
+      <div class="timeline-item open">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-year">2020</span>
+          <span class="timeline-title">Chaotic Adaptation</span>
+        </div>
+        <div class="timeline-body">
+          <p>When Duterte declared Enhanced Community Quarantine, BPO companies scrambled to send ~1.3 million workers home with laptops and VPNs. Workers in cramped Manila apartments (18–24 sqm studios) struggled with noise, shared spaces, and unreliable internet. The dominant tone was survival, not celebration.</p>
+        </div>
+        <span class="timeline-toggle">click to toggle</span>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-year">2021</span>
+          <span class="timeline-title">The Revelation</span>
+        </div>
+        <div class="timeline-body">
+          <p>Workers adapted, internet improved, and a powerful realization crystallized: commute-free life was transformative. On r/phcareers, "never going back" posts proliferated. Workers calculated savings of <strong>₱5,000–15,000/month</strong> on transport, food, and clothing — significant when BPO entry salaries range from ₱18,000–25,000. <em>"Naranasan ko na ang buhay na walang commute"</em> (I've experienced life without commuting) captured the mood.</p>
+        </div>
+        <span class="timeline-toggle">click to expand</span>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-year">2022–23</span>
+          <span class="timeline-title">Political Fury</span>
+        </div>
+        <div class="timeline-body">
+          <p>FIRB's pandemic WFH allowances expired April 1, 2022, requiring PEZA-registered companies to bring workers back or forfeit tax holidays. Online discourse exploded. The framing was stark: <em>"Balik opisina para kanino? Para sa mga may-ari ng building?"</em> (Back to office for whom? For the building owners?). After IBPAP lobbying, a 70/30 compromise (70% onsite, 30% WFH) emerged in September 2022.</p>
+        </div>
+        <span class="timeline-toggle">click to expand</span>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-year">2023–24</span>
+          <span class="timeline-title">Blame Narratives</span>
+        </div>
+        <div class="timeline-body">
+          <p>Workers began pointing fingers at colleagues who allegedly ruined WFH for everyone. The overemployment discourse peaked. Companies deployed aggressive monitoring software, generating privacy backlash. Sentiment fractured between those blaming "abusers" and those insisting the narrative was manufactured to justify corporate control.</p>
+        </div>
+        <span class="timeline-toggle">click to expand</span>
+      </div>
+
+      <div class="timeline-item">
+        <div class="timeline-dot"></div>
+        <div class="timeline-header">
+          <span class="timeline-year">2024–26</span>
+          <span class="timeline-title">Strategic Resignation</span>
+        </div>
+        <div class="timeline-body">
+          <p>The CREATE MORE Act codified <strong>up to 50% WFH</strong> for IT-BPM firms — a major policy victory. But many workers shifted from protest to individual action: filtering jobs for remote-only, moving into freelancing, or accepting the "WFH premium" (lower pay for remote work).</p>
+        </div>
+        <span class="timeline-toggle">click to expand</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- BLAME HIERARCHY -->
+  <div class="section" id="blame">
+    <div class="section-number">02</div>
+    <h2>The Blame Hierarchy</h2>
+    <p>Filipino workers online assign blame in a remarkably consistent hierarchy — <strong>PEZA first, corporations second, coworkers third</strong>.</p>
+
+    <div class="blame-stack">
+      <div class="blame-bar" style="--width: 90%">
+        <div class="fill" style="background: var(--accent)"></div>
+        <span class="rank" style="color: var(--accent)">#1</span>
+        <div>
+          <div class="name">Government Policy (PEZA / FIRB)</div>
+          <div class="detail">
+            <p>Fiscal incentives were weaponized to force BPO workers into offices — not for productivity, but to protect commercial real estate landlords and the businesses surrounding office districts in BGC, Makati, and Ortigas. The phrase <em>"the government is subsidizing landlords at our expense"</em> recurs across every platform.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="blame-bar" style="--width: 65%">
+        <div class="fill" style="background: var(--accent4)"></div>
+        <span class="rank" style="color: var(--accent4)">#2</span>
+        <div>
+          <div class="name">Corporate Control & Real Estate Interests</div>
+          <div class="detail">
+            <p>Workers cite companies' long-term office leases — <em>"they signed 10-year leases and need to justify them"</em> — and middle management's need to feel important. BPO companies already monitor every keystroke and screen capture. Workers argue this proves RTO isn't about visibility but about physical control: <em>"They trust us with their data but not with our time."</em></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="blame-bar" style="--width: 40%">
+        <div class="fill" style="background: var(--accent2)"></div>
+        <span class="rank" style="color: var(--accent2)">#3</span>
+        <div>
+          <div class="name">Fellow Workers Who Abused WFH</div>
+          <div class="detail">
+            <p>The most internally contentious target. Typical posts: <em>"I hate the people who abused WFH — because of them, management thinks none of us can be trusted."</em> But rebuttals are swift: <em>"Slackers exist in the office too, they just look busy. WFH just made it measurable."</em> On r/antiworkPH, abuse narratives are seen as entirely manufactured — RTO as "class warfare."</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABUSE STORIES -->
+  <div class="section" id="abuse">
+    <div class="section-number">03</div>
+    <h2>The Abuse Stories Employers Weaponized</h2>
+    <p>Specific categories of WFH misconduct became central to the Philippine RTO justification narrative. Each exists in a gray zone between documented reality and amplified anecdote.</p>
+
+    <div class="abuse-grid">
+      <div class="abuse-card">
+        <div class="abuse-card-header">
+          <span class="abuse-icon">😴</span>
+          <h4>Sleeping During Shifts</h4>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="abuse-card-body">
+          <div class="abuse-card-body-inner">
+            <p>The most commonly cited abuse, particularly for BPO workers on graveyard shifts serving U.S. time zones. Monitoring software captured idle screens and unresponsive workers for hours.</p>
+            <p>The counter-narrative is revealing: some workers openly admit napping but insist they met all KPIs — <em>"Okay, I did take naps sometimes, but I still met all my metrics. What's the problem?"</em></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="abuse-card">
+        <div class="abuse-card-header">
+          <span class="abuse-icon">💼</span>
+          <h4>Overemployment (J1, J2, J3)</h4>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="abuse-card-body">
+          <div class="abuse-card-body-inner">
+            <p>The most divisive topic. Workers adopted the "overemployed" trend — holding two or three full-time remote jobs. Defenders frame it as <em>"diskarte"</em> (resourcefulness); critics call it fraud.</p>
+            <p>Viral TikTok stories featured workers earning combined ₱100,000–200,000 monthly from multiple foreign clients, fueling both camps.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="abuse-card">
+        <div class="abuse-card-header">
+          <span class="abuse-icon">💻</span>
+          <h4>Unreturned Equipment</h4>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="abuse-card-body">
+          <div class="abuse-card-body-inner">
+            <p>BPO companies distributed laptops, monitors, headsets, chairs. Reports circulated of resigned employees selling company laptops on Facebook Marketplace and Carousell PH — some pawned.</p>
+            <p>Workers countered that equipment was often outdated and companies illegally withheld final pay using equipment return as leverage.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="abuse-card">
+        <div class="abuse-card-header">
+          <span class="abuse-icon">👻</span>
+          <h4>Ghost Employees & Side Businesses</h4>
+          <span class="chevron">▼</span>
+        </div>
+        <div class="abuse-card-body">
+          <div class="abuse-card-body-inner">
+            <p>Workers used mouse jigglers and auto-clickers to simulate activity while running Shopee/Lazada stores, freelancing on Upwork, or watching Netflix. <em>"Online pero wala naman ginagawa"</em> (online but not doing anything) became shorthand.</p>
+            <p>The "raket" (side gig) culture is deeply embedded in Filipino work life — WFH just removed the physical constraint.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BPO GROUND ZERO -->
+  <div class="section" id="bpo">
+    <div class="section-number">04</div>
+    <h2>Why the BPO Industry Became Ground Zero</h2>
+    <p>The Philippine BPO sector's WFH trajectory was uniquely shaped by the collision between government fiscal policy, foreign client demands, and worker preferences.</p>
+
+    <div class="callout info">
+      <div class="callout-title">The PEZA Constraint</div>
+      <p>Companies registered in special economic zones received income tax holidays, a preferential 5% gross income tax rate, VAT exemptions, and duty-free importation. When FIRB required physical presence to keep these benefits, BPO companies faced an existential choice: allow WFH and lose tax perks, or mandate RTO and keep them. Most chose compliance. A few de-registered from PEZA entirely.</p>
+    </div>
+
+    <h3>Foreign Client Demands</h3>
+    <p>Companies handling healthcare data (HIPAA), financial information (PCI-DSS), and government contracts faced client mandates for physically secured offices — no personal phones, monitored exits, locked USB ports. These security measures are nearly impossible to replicate at home. <strong>Data security was the most concrete, least ideological justification for RTO.</strong></p>
+
+    <h3>IBPAP's Fight — and Partial Victory</h3>
+    <p>The industry association consistently lobbied for WFH allowances, arguing the Philippines would lose ground to India and Poland. IBPAP was instrumental in securing the <strong>CREATE MORE Act's provisions allowing up to 50% WFH</strong> for registered IT-BPM firms — up from the earlier 30% cap.</p>
+
+    <div class="callout warning">
+      <div class="callout-title">Competitive Risk</div>
+      <p>India's major IT companies (TCS, Infosys, Wipro) pushed aggressive RTO in 2023–2024, but India's infrastructure advantages meant the competitive comparison was imperfect. The Philippines risked losing talent to fully remote international positions rather than to rival outsourcing destinations.</p>
+    </div>
+  </div>
+
+  <!-- COMMUTE CRISIS -->
+  <div class="section" id="commute">
+    <div class="section-number">05</div>
+    <h2>Manila's Commute Crisis Makes WFH Existential</h2>
+    <p>No analysis is complete without understanding that <strong>Metro Manila's commute is the single most powerful driver of WFH demand</strong> — more than work-life balance, productivity, or any Western WFH talking point.</p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="value" style="color: var(--accent)">1.5–4 hrs</span>
+        <span class="desc">Average one-way commute</span>
+      </div>
+      <div class="stat-card">
+        <span class="value" style="color: var(--accent2)">₱3.5B</span>
+        <span class="desc">Daily cost of congestion (JICA est.)</span>
+      </div>
+      <div class="stat-card">
+        <span class="value" style="color: var(--accent4)">₱8–12K</span>
+        <span class="desc">Monthly commute cost</span>
+      </div>
+      <div class="stat-card">
+        <span class="value" style="color: var(--accent3)">15–20</span>
+        <span class="desc">Typhoons per year</span>
+      </div>
+    </div>
+
+    <p>When Filipino workers say WFH gave them back <strong>"4–6 hours of my life daily,"</strong> they mean it literally. For a worker earning ₱20,000 monthly, spending ₱8,000–12,000 on commuting is devastating. <strong>Every RTO mandate is functionally a pay cut.</strong></p>
+
+    <div class="quote">
+      "Workers regularly wade through chest-deep floodwaters to reach offices."
+      <span class="source">— common during typhoon season, with 15–20 typhoons annually</span>
+    </div>
+
+    <h3>The Provincial Migration</h3>
+    <p>The pandemic created a powerful narrative. Workers forced to live in Manila for BPO jobs relocated to Cebu, Davao, Iloilo, and Baguio — or returned home to care for aging parents while maintaining Manila-level salaries. <strong>"Probinsya life"</strong> (provincial life) gained traction on social media. Being forced back to Manila means not just lost commute time but the dissolution of an entire lifestyle restructuring.</p>
+  </div>
+
+  <!-- CULTURAL FAULT LINES -->
+  <div class="section" id="culture">
+    <div class="section-number">06</div>
+    <h2>Cultural Fault Lines</h2>
+    <p>The WFH debate is inflected by specific cultural dynamics that shape how both abuse and resistance are framed.</p>
+
+    <div class="term-list">
+      <div class="term-item">
+        <div class="term-word">Diskarte <span class="pron">/dis·kar·te/</span></div>
+        <div class="term-def">Resourcefulness, street-smarts, creative problem-solving in constrained circumstances. Pro-WFH workers use it to describe smart career management (<em>"diskarte lang yan"</em>). Critics use it pejoratively: <em>"diskarte ng tamad"</em> — resourcefulness of the lazy. The overemployment trend sits squarely in diskarte territory, which is why Filipino discourse is more culturally ambivalent than Western forums.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-word">Crab Mentality <span class="pron">utak talangka</span></div>
+        <div class="term-def">The idea that people pull others down to prevent them from succeeding. Workers who report colleagues' misconduct are sometimes accused of crab mentality. Office-based workers who resent WFH arrangements are similarly dismissed. This makes it difficult to distinguish legitimate accountability from jealousy-driven sabotage.</div>
+      </div>
+      <div class="term-item">
+        <div class="term-word">Paternalistic Supervision</div>
+        <div class="term-def"><em>"Pag walang nagbabantay, walang gagawa"</em> — if no one is watching, no one will work. This employer mindset pre-dates the pandemic. Surveillance tools deployed in response — keystroke loggers, screenshot captures every 5 minutes, mandatory camera-on, workstation selfies — represent a digital recreation of physical oversight. Workers find it deeply insulting: <em>"parang nasa kulungan"</em> (like being in prison).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE NUMBERS -->
+  <div class="section" id="data">
+    <div class="section-number">07</div>
+    <h2>The Numbers: A Massive Preference Gap</h2>
+    <p>Survey data reveals a significant employer-employee divide on WFH in the Philippines.</p>
+
+    <h3>Worker Preferences</h3>
+    <div class="bar-chart" id="workerChart">
+      <div class="bar-row">
+        <span class="bar-label">Hybrid</span>
+        <div class="bar-track" style="--w: 63%">
+          <div class="bar-fill" style="background: linear-gradient(90deg, var(--accent4), var(--accent5))">~63%</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Fully Remote</span>
+        <div class="bar-track" style="--w: 22%">
+          <div class="bar-fill" style="background: linear-gradient(90deg, var(--accent3), var(--accent4))">~22%</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Fully Onsite</span>
+        <div class="bar-track" style="--w: 17%">
+          <div class="bar-fill" style="background: linear-gradient(90deg, var(--accent), var(--accent2))">~17%</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Employer Preferences</h3>
+    <div class="bar-chart" id="employerChart">
+      <div class="bar-row">
+        <span class="bar-label">Fully Onsite</span>
+        <div class="bar-track" style="--w: 48%">
+          <div class="bar-fill" style="background: linear-gradient(90deg, var(--accent), var(--accent2))">~48%</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Hybrid</span>
+        <div class="bar-track" style="--w: 40%">
+          <div class="bar-fill" style="background: linear-gradient(90deg, var(--accent4), var(--accent5))">~40%</div>
+        </div>
+      </div>
+      <div class="bar-row">
+        <span class="bar-label">Fully Remote</span>
+        <div class="bar-track" style="--w: 12%">
+          <div class="bar-fill" style="background: linear-gradient(90deg, var(--accent3), var(--accent4))">~12%</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="font-size: 0.85rem; color: var(--text-muted);">Sources: Jobstreet "Decoding Global Talent" 2022, Sprout Solutions Workplace Survey 2023</p>
+
+    <div class="stat-grid">
+      <div class="stat-card">
+        <span class="value" style="color: var(--accent3)">3×</span>
+        <span class="desc">Broadband speed increase 2019→2024</span>
+      </div>
+      <div class="stat-card">
+        <span class="value" style="color: var(--accent2)">₱1.5–2.5K</span>
+        <span class="desc">Monthly home internet cost</span>
+      </div>
+      <div class="stat-card">
+        <span class="value" style="color: var(--accent)">₱10–12</span>
+        <span class="desc">Per kWh electricity (among Asia's highest)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONCLUSION -->
+  <div class="section" id="conclusion">
+    <div class="section-number">08</div>
+    <h2>Conclusion</h2>
+    <p>The Filipino WFH debate is not a simple productivity argument. It is a collision between <strong>fiscal policy architecture</strong> (PEZA's economic zone model), <strong>infrastructure failure</strong> (Manila's transport crisis), <strong>cultural assumptions</strong> about worker trustworthiness, and a genuine but amplified catalogue of worker misconduct.</p>
+
+    <div class="quote">
+      Filipino workers see WFH not as a perk but as compensation for a broken urban infrastructure — and losing it feels like punishment for systemic failures they didn't create.
+    </div>
+
+    <p>The CREATE MORE Act's codification of 50% WFH for registered IT-BPM firms represents a partial resolution, but the deeper trust question remains unresolved. Employers continue to deploy surveillance tools that workers experience as dehumanizing, while workers pursue "diskarte" strategies that confirm employer suspicions.</p>
+
+    <p><strong>The abuse narratives are real but isolated; the structural incentives for WFH are overwhelming.</strong> What Filipino social media reveals most clearly is that the WFH debate is, at bottom, a proxy war over who bears the cost of the Philippines' infrastructure deficit — and workers are losing.</p>
+  </div>
+
+</main>
+
+<footer>
+  <p>Research compiled from r/phcareers, r/Philippines, r/antiworkPH, Twitter/X, Facebook, and TikTok</p>
+  <p style="margin-top: 8px;"><a href="/">← tomatamagotato.com</a></p>
+</footer>
+
+<script>
+  // ── Intersection Observer for fade-in ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) e.target.classList.add('visible');
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.section').forEach(s => observer.observe(s));
+
+  // ── Bar chart animation ──
+  const barObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.bar-track').forEach(t => t.classList.add('animated'));
+      }
+    });
+  }, { threshold: 0.3 });
+
+  document.querySelectorAll('.bar-chart').forEach(c => barObserver.observe(c));
+
+  // ── Blame bar animation ──
+  const blameObserver = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.blame-bar').forEach((b, i) => {
+          setTimeout(() => b.classList.add('animated'), i * 200);
+        });
+      }
+    });
+  }, { threshold: 0.2 });
+
+  document.querySelectorAll('.blame-stack').forEach(s => blameObserver.observe(s));
+
+  // ── Timeline toggle ──
+  document.querySelectorAll('.timeline-item').forEach(item => {
+    item.addEventListener('click', () => item.classList.toggle('open'));
+  });
+
+  // ── Abuse card toggle ──
+  document.querySelectorAll('.abuse-card').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('open'));
+  });
+
+  // ── Blame bar expand ──
+  document.querySelectorAll('.blame-bar').forEach(bar => {
+    bar.addEventListener('click', () => bar.classList.toggle('expanded'));
+  });
+
+  // ── Sticky nav active state ──
+  const tocBar = document.getElementById('tocBar');
+  const tocLinks = document.querySelectorAll('.toc-link');
+  const sections = [];
+
+  tocLinks.forEach(link => {
+    const id = link.getAttribute('href').slice(1);
+    const el = document.getElementById(id);
+    if (el) sections.push({ id, el, link });
+  });
+
+  window.addEventListener('scroll', () => {
+    // shadow on scroll
+    tocBar.classList.toggle('scrolled', window.scrollY > 100);
+
+    // active link
+    let current = '';
+    sections.forEach(({ id, el }) => {
+      if (el.getBoundingClientRect().top <= 120) current = id;
+    });
+    tocLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + current));
+  });
+</script>
+
+</body>
+</html>

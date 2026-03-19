@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tomatamagotato — Portfolio & Research</title>
+  <meta name="description" content="Research, analysis, and creative work by tomatamagotato.">
+  <style>
+    :root {
+      --bg: #0d1117;
+      --surface: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --text-muted: #8b949e;
+      --accent: #ff6b6b;
+      --accent2: #ffd93d;
+      --link: #58a6ff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .container {
+      text-align: center;
+      padding: 48px 24px;
+      max-width: 640px;
+      width: 100%;
+    }
+
+    .logo {
+      font-size: 3.5rem;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    h1 {
+      font-size: clamp(1.8rem, 4vw, 2.4rem);
+      font-weight: 800;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .tagline {
+      color: var(--text-muted);
+      font-size: 1.05rem;
+      margin-bottom: 48px;
+    }
+
+    .projects {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      text-align: left;
+    }
+
+    .project-card {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      text-decoration: none;
+      color: var(--text);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .project-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .project-card .badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    .badge-report { background: rgba(255,107,107,0.15); color: var(--accent); }
+    .badge-video { background: rgba(255,217,61,0.15); color: var(--accent2); }
+
+    .project-card h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .project-card p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .social {
+      margin-top: 48px;
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .social a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .social a:hover {
+      color: var(--text);
+      border-color: var(--text-muted);
+    }
+
+    footer {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      text-align: center;
+      padding: 16px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      opacity: 0.5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <span class="logo">🍅</span>
+    <h1>tomatamagotato</h1>
+    <p class="tagline">Portfolio & research</p>
+
+    <div class="projects">
+      <a class="project-card" href="/blogs/wfh-philippines/">
+        <span class="badge badge-report">Interactive Report</span>
+        <h2>How Filipino Workers Lost WFH — and Who They Blame</h2>
+        <p>Sentiment analysis across Reddit, Twitter/X, Facebook, and TikTok. Covering PEZA policy, the BPO industry, Manila's commute crisis, and cultural fault lines.</p>
+      </a>
+
+      <a class="project-card" href="https://www.youtube.com/watch?v=z-xawoH8lSs" target="_blank" rel="noopener">
+        <span class="badge badge-video">Video</span>
+        <h2>Dumblore Maneuver</h2>
+        <p>Watch on YouTube →</p>
+      </a>
+    </div>
+
+    <div class="social">
+      <a href="https://www.instagram.com/tomatamagotato/" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+
+  <footer>© 2026 tomatamagotato</footer>
+
+</body>
+</html>
