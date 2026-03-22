@@ -1,1 +1,8 @@
 .claude/
+node_modules/
+.nuxt/
+.output/
+dist/
+.playwright-mcp/
+*.png
+!public/**/*.png
