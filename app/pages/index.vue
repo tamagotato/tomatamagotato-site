@@ -1,6 +1,6 @@
 <template>
   <div class="home-page">
-    <img src="/img/blueman with a gun vector.png" alt="" class="bg-watermark" aria-hidden="true">
+    <img src="/img/blueman-watermark.png" alt="" class="bg-watermark" aria-hidden="true">
 
     <!-- Hero -->
     <section class="hero">
@@ -9,7 +9,7 @@
         <p class="hero-text">i make things. some useful. some just weird. this is where all of it lives.</p>
       </div>
       <div class="hero-avatar">
-        <img src="/img/bluman 2 - Copy.png" alt="tomatamagotato avatar">
+        <img src="/img/bluman-2-copy.png" alt="tomatamagotato avatar">
       </div>
     </section>
 
@@ -37,7 +37,7 @@
         <p class="video-caption">dumblore maneuver</p>
       </div>
       <div class="video-illustration">
-        <img src="/img/frogger panel 5.png" alt="tomatamagotato gaming">
+        <img src="/img/frogger-panel-5.png" alt="tomatamagotato gaming">
       </div>
     </section>
 
@@ -63,7 +63,7 @@ const artImages = [
   { src: '/img/bugsy -2.png', alt: 'bugsy' },
   { src: '/img/Inktober 3 - Copy.png', alt: 'inktober' },
   { src: '/img/angry emote.png', alt: 'angry emote' },
-  { src: '/img/blueman with a gun vector.png', alt: 'blueman' },
+  { src: '/img/blueman-watermark.png', alt: 'blueman' },
   { src: '/img/kwini - Copy.png', alt: 'kwini' },
   { src: '/img/idshonor 2.png', alt: 'idshonor' },
   { src: '/img/27493159.png', alt: 'artwork' },
