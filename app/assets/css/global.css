@@ -71,29 +71,54 @@ main { flex: 1; }
 }
 
 .theme-light .site-nav {
-  background: rgba(245, 240, 235, 0.85);
-  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: rgba(245, 242, 234, 0.88);
+  border-bottom: 1px solid rgba(107, 140, 62, 0.15);
 }
 
 .theme-dark .site-nav {
-  background: rgba(26, 22, 21, 0.85);
-  border-bottom: 1px solid #3a3230;
+  background: rgba(15, 15, 15, 0.88);
+  border-bottom: 1px solid #2a2a2a;
 }
 
+/* Blueman badge logo */
 .nav-logo {
-  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   text-decoration: none;
 }
 
-.nav-logo-img {
-  width: 80px;
-  height: 80px;
+.nav-logo-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #6b8c3e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.nav-logo-badge img {
+  width: 36px;
+  height: 36px;
   object-fit: contain;
 }
+
+.nav-logo-name {
+  font-size: 0.95rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.theme-light .nav-logo-name { color: #1a1a1a; }
+.theme-dark .nav-logo-name { color: #f0ece4; }
 
 .nav-links {
   display: flex;
   gap: 24px;
+  align-items: center;
 }
 
 .nav-link {
@@ -106,7 +131,7 @@ main { flex: 1; }
 .nav-link:hover { opacity: 0.7; }
 
 .theme-light .nav-link { color: #333; }
-.theme-dark .nav-link { color: #ddd5cc; }
+.theme-dark .nav-link { color: #ccc; }
 
 /* ── Footer ── */
 .site-footer {
@@ -119,14 +144,15 @@ main { flex: 1; }
 }
 
 .theme-light .site-footer {
-  background: #e8e0d8;
+  background: #edeae0;
   color: #555;
+  border-top: 1px solid #ddd;
 }
 
 .theme-dark .site-footer {
-  background: #1a1615;
-  border-top: 1px solid #3a3230;
-  color: #9a8e82;
+  background: #0f0f0f;
+  border-top: 1px solid #2a2a2a;
+  color: #888;
 }
 
 .footer-text {
@@ -150,21 +176,22 @@ main { flex: 1; }
 
 .theme-light .social-icon {
   color: #555;
-  background: rgba(0,0,0,0.06);
+  background: rgba(107, 140, 62, 0.1);
+  border: 1px solid rgba(107, 140, 62, 0.2);
 }
 
 .theme-light .social-icon:hover {
-  background: rgba(0,0,0,0.12);
+  background: rgba(107, 140, 62, 0.2);
   transform: translateY(-2px);
 }
 
 .theme-dark .social-icon {
-  color: #9a8e82;
-  background: #231f1e;
-  border: 1px solid #3a3230;
+  color: #888;
+  background: #1a1a1a;
+  border: 1px solid #2a2a2a;
 }
 
 .theme-dark .social-icon:hover {
-  color: #f0ebe5;
+  color: #8aaa55;
   transform: translateY(-2px);
 }
