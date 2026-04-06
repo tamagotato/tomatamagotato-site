@@ -1,31 +1,20 @@
 <template>
   <div class="home-page">
     <img src="/img/blueman with a gun vector.png" alt="" class="bg-watermark" aria-hidden="true">
+
     <!-- Hero -->
     <section class="hero">
-      <div class="hero-intro">
-        <h1 class="hero-name">I am<br>tomatamagotato.</h1>
+      <div class="hero-content">
+        <h1 class="hero-name">tomatamagotato.</h1>
+        <p class="hero-text">i make things. some useful. some just weird. this is where all of it lives.</p>
       </div>
-      <div class="hero-text">
-        <p>this is my website. i am not a developer. but i try to think like one.</p>
-      </div>
-    </section>
-
-    <!-- Accordion -->
-    <section class="accordion">
-      <div class="accordion-header" :class="{ open: accordionOpen }" @click="accordionOpen = !accordionOpen">
-        <span>i try out a lot of things.</span>
-        <span class="chevron">&#9660;</span>
-      </div>
-      <div class="accordion-body" :style="{ maxHeight: accordionOpen ? '600px' : '0' }">
-        <div class="accordion-body-inner">
-          <p>sometimes i do art. sometimes i edit videos. sometimes i write about things i care about. sometimes i just mess around with code until something works. this site is where all of that lives.</p>
-        </div>
+      <div class="hero-avatar">
+        <img src="/img/bluman 2 - Copy.png" alt="tomatamagotato avatar">
       </div>
     </section>
 
     <!-- Art Gallery -->
-    <p class="section-title">sometimes i do art too.</p>
+    <p class="section-title">art</p>
     <div class="art-gallery">
       <div v-for="img in artImages" :key="img.alt" class="art-item">
         <img :src="img.src" :alt="img.alt">
@@ -33,26 +22,31 @@
     </div>
 
     <!-- Video -->
-    <p class="section-title">I'm trying to learn a bit in video editing when i get bored.</p>
+    <p class="section-title">video</p>
     <section class="video-section">
-      <div class="video-embed">
-        <iframe
-          src="https://www.youtube.com/embed/z-xawoH8lSs"
-          title="dumblore maneuver"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          allowfullscreen
-          loading="lazy"
-        ></iframe>
+      <div class="video-main">
+        <div class="video-embed">
+          <iframe
+            src="https://www.youtube.com/embed/z-xawoH8lSs"
+            title="dumblore maneuver"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen
+            loading="lazy"
+          ></iframe>
+        </div>
+        <p class="video-caption">dumblore maneuver</p>
       </div>
-      <p class="video-caption">dumblore maneuver</p>
+      <div class="video-illustration">
+        <img src="/img/frogger panel 5.png" alt="tomatamagotato gaming">
+      </div>
     </section>
 
-    <!-- Blog List -->
-    <p class="section-title">things i've written.</p>
+    <!-- Blog Preview -->
+    <p class="section-title">writing</p>
     <div class="blog-list">
       <a class="blog-card" href="/blogs/wfh-philippines">
-        <h3>How Filipino Workers Lost WFH — and Who They Blame</h3>
         <div class="blog-date">March 22, 2026</div>
+        <h3>How Filipino Workers Lost WFH — and Who They Blame</h3>
         <p>Sentiment analysis across Reddit, Twitter/X, Facebook, and TikTok. Covering PEZA policy, the BPO industry, Manila's commute crisis, and cultural fault lines.</p>
       </a>
     </div>
@@ -61,8 +55,6 @@
 
 <script setup lang="ts">
 useHead({ title: 'tomatamagotato' })
-
-const accordionOpen = ref(false)
 
 const artImages = [
   { src: '/img/face.png', alt: 'face' },
@@ -94,7 +86,7 @@ const artImages = [
   width: 3000px;
   height: 3000px;
   object-fit: contain;
-  opacity: 0.3;
+  opacity: 0.04;
   pointer-events: none;
   z-index: 1;
 }
@@ -103,8 +95,7 @@ const artImages = [
 .home-page :deep(.art-gallery),
 .home-page :deep(.video-section),
 .home-page :deep(.blog-list),
-.home-page :deep(.section-title),
-.home-page :deep(.accordion) {
+.home-page :deep(.section-title) {
   position: relative;
   z-index: 2;
 }
