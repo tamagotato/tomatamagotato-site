@@ -44,6 +44,11 @@
     <!-- Blog Preview -->
     <p class="section-title">writing</p>
     <div class="blog-list">
+      <a class="blog-card" href="/blogs/remotion-llm-infographics">
+        <div class="blog-date">July 24, 2026</div>
+        <h3>Using an LLM to Draft Static Infographics with Remotion</h3>
+        <p>A real worked example: turning a photographed community circular into a mobile-formatted poster — and the five specific ways this workflow actually breaks.</p>
+      </a>
       <a class="blog-card" href="/blogs/wfh-philippines">
         <div class="blog-date">March 22, 2026</div>
         <h3>How Filipino Workers Lost WFH — and Who They Blame</h3>

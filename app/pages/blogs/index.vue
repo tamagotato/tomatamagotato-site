@@ -4,6 +4,13 @@
     <p class="blog-index-subtitle">whatever i feel like. no consistent theme. just honest pieces.</p>
     <ul class="blog-index-list">
       <li>
+        <a class="blog-index-card" href="/blogs/remotion-llm-infographics">
+          <time>July 24, 2026</time>
+          <h2>Using an LLM to Draft Static Infographics with Remotion</h2>
+          <p>A real worked example: turning a photographed community circular into a mobile-formatted poster — and the five specific ways this workflow actually breaks.</p>
+        </a>
+      </li>
+      <li>
         <a class="blog-index-card" href="/blogs/wfh-philippines">
           <time>March 22, 2026</time>
           <h2>How Filipino Workers Lost WFH — and Who They Blame</h2>
