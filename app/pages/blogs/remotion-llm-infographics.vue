@@ -3,42 +3,36 @@
     <h1 class="post-title">Using an LLM to Draft Static Infographics with Remotion</h1>
     <time class="post-date">July 24, 2026</time>
 
-    <p>Every internal announcement — a policy notice, an event flyer, a community circular — starts with the same tax: open a blank canvas, pick a layout, fight with alignment, ship something that looks like it took longer than it should have. For one-off internal communications, that tax is rarely worth paying by hand.</p>
+    <p>Every internal announcement (a policy notice, an event flyer, a community circular) starts with the same tax: open a blank canvas, pick a layout, fight with alignment, ship something that looks like it took longer than it should have. For one-off internal communications, that tax is rarely worth paying by hand.</p>
 
-    <p>This is a walkthrough of a workflow that removes most of it: an LLM turns a rough source document into a structured static infographic, rendered by <a href="https://www.remotion.dev/" target="_blank" rel="noopener">Remotion</a> — a framework built for programmatically generating video, which also happens to render a single still frame just fine.</p>
+    <p>I found a small workflow that skips most of that tax, and I've been genuinely happy using it, so I wanted to write it up. It doesn't replace anything or rework how I work. It's just a nice little shortcut: an LLM turns a rough source document into a structured static infographic, rendered by <a href="https://www.remotion.dev/" target="_blank" rel="noopener">Remotion</a>, a framework built for programmatically generating video that also happens to render a single still frame just fine.</p>
 
     <h2>Why Remotion, not Canva or Figma</h2>
 
     <p>Remotion isn't a competitor to Canva or Figma here. It's a first draft.</p>
 
-    <p><strong>It's programmatic, which means it's automatable.</strong> Canva and Figma assume a human clicking through a UI. Remotion is a React component rendered to an image — you can call it from a script, a cron job, or an LLM's tool loop with no human in the middle. That's the entire point of pairing it with an LLM in the first place.</p>
+    <p>Canva and Figma assume a human clicking through a UI. Remotion is a React component rendered to an image, so you can call it from a script, a cron job, or an LLM's tool loop with no human in the middle. That's the entire point of pairing it with an LLM in the first place: programmatic means automatable.</p>
 
-    <p><strong>LLMs are already fluent in the medium.</strong> A model that's seen millions of React components is far better at writing and modifying a Remotion component than it is at driving a Figma plugin API or a Canva integration it's rarely, if ever, been trained against.</p>
+    <p>A model that's seen millions of React components is far better at writing and modifying a Remotion component than it is at driving a Figma plugin API or a Canva integration it's rarely been trained against.</p>
 
-    <p><strong>And it's explicitly assistive, not a replacement.</strong> The output is a fast, data-driven boilerplate — a real starting layout, not a polished final asset. If something needs to look genuinely designed, a Canva or Figma user can still pick it up from there. This workflow just means nobody has to start from nothing.</p>
-
-    <p>Here's what that actually looks like — including where it broke.</p>
+    <p>The output is a fast, data-driven boilerplate: a real starting layout, not a polished final asset. If something needs to look genuinely designed, a Canva or Figma user can still pick it up from there. This workflow just means nobody has to start from nothing, and honestly, not starting from nothing is most of the battle for me.</p>
 
     <h2>The setup</h2>
 
-    <p>The source material was a photographed community circular — a condo association's printed notice about weather and safety guidelines for a Sunday fun run. Not typed notes, not a JSON blob. A photo of a physical letterhead document, the kind of thing that actually accumulates in a shared drive.</p>
+    <p>The source material was a photographed community circular, a condo association's printed notice about weather and safety guidelines for a Sunday fun run. A photo of a physical letterhead document, the kind of thing that actually accumulates in a shared drive, not typed notes or a JSON blob.</p>
 
     <p>The prompt was one line, handed to an LLM already working inside the Remotion project's codebase:</p>
 
     <pre><code>generate a static mobile formatted announcement based on
 reference/fun-run-guidelines.jpg. follow our established CTA patterns</code></pre>
 
-    <p>No files were pointed to. "Established CTA patterns" was left for the model to figure out on its own.</p>
+    <p>No files were pointed to directly. "Established CTA patterns" was left for the model to figure out on its own. Kind of a mean thing to do to it, honestly, but that was the point.</p>
 
     <h2>How it found the pattern</h2>
 
-    <p>Watching what the model actually did to resolve "established patterns" turned out to be the most useful part of this exercise.</p>
+    <p>This part is my favorite part to watch, every time. The model read <code>Root.tsx</code> first and learned that static posters in this codebase are registered as Remotion <code>&lt;Still&gt;</code> compositions, distinct from animated <code>&lt;Composition&gt;</code> entries sitting next to them. From there it found an existing poster component and used it as a structural template: letterhead band, headline, highlighted panel, call-to-action block, footer. It pulled the shared color palette and font loader from the theme file, and sampled a sibling component to see how time-sensitive information gets styled: a red rounded block with a muted label and large white value.</p>
 
-    <p>It read <code>Root.tsx</code> first and learned that static posters in this codebase are registered as Remotion <code>&lt;Still&gt;</code> compositions, distinct from the animated <code>&lt;Composition&gt;</code> entries sitting next to them. From there it found an existing poster component and used it as a direct structural precedent — letterhead band, headline, a highlighted panel, a call-to-action block, a footer. Then it pulled the shared color palette and font loader out of the project's theme file, and sampled a sibling component to see how time-sensitive information — a deadline, a pickup window — gets styled: a red rounded block, a muted label, a large white value.
-
-    </p>
-
-    <p>Here's the letterhead and the pickup-window block from the shipped component — the two pieces that most directly reused an existing pattern. Names, circular number, and location are fictionalized for this post; the JSX structure and styling are exactly what shipped:</p>
+    <p>Here's the letterhead and pickup-window block from the shipped component. Names, circular number, and location are fictionalized for this post; the JSX structure and styling are exactly what shipped:</p>
 
     <pre v-pre><code>&lt;div style={{backgroundColor: C.greenDark, padding: '34px 60px', textAlign: 'center'}}&gt;
   &lt;div style={{fontSize: 32, fontWeight: 800, color: '#FFFFFF', letterSpacing: 3}}&gt;
@@ -62,15 +56,15 @@ reference/fun-run-guidelines.jpg. follow our established CTA patterns</code></pr
   &lt;/div&gt;
 &lt;/div&gt;</code></pre>
 
-    <p>None of that was pointed to explicitly. It was inferred — and it was only inferable because the components it was reading carried comments that explained <em>intent</em>, not just structure. One theme file had a comment noting that a given component should read as part of the same visual family as its siblings. That line did real work: it functioned as a design-system spec for a future LLM pass, not just documentation for a future human.</p>
+    <p>None of that was pointed to explicitly. It was inferred by reading the codebase, and it was only inferable because the components carried comments that explained <em>intent</em>, not just structure. One theme file had a note that a given component should read as part of the same visual family as its siblings. That comment did real work as a design-system spec for a future LLM pass, not just documentation for a human reader.</p>
 
-    <p>The lesson generalizes past this one example: if you want an LLM to infer your conventions, the conventions have to be written down somewhere it can read them. Consistent code shape alone isn't enough — a model can't always tell the difference between "this is the pattern" and "this is just how this one file happened to be written."</p>
+    <p>If you want an LLM to infer your conventions, the conventions have to be written down somewhere it can read them. Consistent code shape alone isn't enough, because a model can't always tell the difference between "this is the pattern" and "this is just how this one file happened to be written."</p>
 
     <h2>Two passes, not one</h2>
 
-    <p>The first generation typechecked cleanly and rendered without error. It also silently overflowed the canvas — the call-to-action block and footer were clipped off the bottom of a fixed 1920px frame. Nothing in the tooling flagged it. A type check and a successful render both say nothing about whether the layout actually fits.</p>
+    <p>The first generation typechecked cleanly and rendered without error. It also silently overflowed the canvas: the call-to-action block and footer were clipped off the bottom of the fixed 1920px frame. Nothing in the tooling caught it. A type check and a successful render both say nothing about whether the layout actually fits.</p>
 
-    <p>The second pass fixed exactly that, and only that — no copy changed, only spacing and type scale came down across the board:</p>
+    <p>The second pass fixed the overflow, and only that. No copy changed, just spacing and type scale came down across the board, which felt a little humbling for a poster about attending a fun run:</p>
 
     <table>
       <thead>
@@ -83,40 +77,40 @@ reference/fun-run-guidelines.jpg. follow our established CTA patterns</code></pr
       </tbody>
     </table>
 
-    <p>What made the second pass possible wasn't human feedback — it was the model inspecting its own rendered PNG output and catching the overflow itself. That's worth being precise about: this was a two-shot result with a self-correction, not a one-shot success. Rounding that up to "it nailed it on the first try" would misrepresent how the workflow actually behaves.</p>
+    <p>The model inspected its own rendered PNG output and caught the overflow itself. This was a two-shot result with self-correction, not a one-shot success, and that matters, since rounding it up to "it nailed it on the first try" would misrepresent how the workflow behaves.</p>
 
     <h2>The result</h2>
 
-    <p>What shipped was a clean, mobile-formatted static poster: letterhead, headline, a weather-guidance panel, a red pickup-window block, a call-to-action, and a footer — matching the visual family of every other poster already in the project, generated from a photo of a printed notice and one sentence of instruction.</p>
+    <p>Here's what came out the other end, and I still think it's kind of neat:</p>
 
     <img src="/img/funrun-poster-fictional.png" alt="Rendered static poster: a mobile-formatted weather and safety advisory for a community fun run, with a letterhead band, headline, weather-guidance panel, red pickup-window block, call-to-action, and footer" width="1080" height="1920">
 
-    <p class="post-caption">The names, circular number, and contact details above are fictional — swapped in for this post. The layout, copy, and structure are exactly what the model shipped.</p>
+    <p class="post-caption">The names, circular number, and contact details above are fictional, swapped in for this post. The layout, copy, and structure are exactly what the model shipped.</p>
 
     <h2>Where this actually breaks</h2>
 
-    <p>None of this replaces judgment. Five specific things are worth knowing before you trust this pattern for something real.</p>
+    <p>There are real limitations worth knowing before you trust this pattern for something that matters.</p>
 
     <h3>1. Overflow fails silently</h3>
-    <p>A typecheck passing and a render completing tell you nothing about whether the layout fits inside its own canvas. The only reliable check is looking at the rendered image. If that step gets skipped, a clipped result ships looking exactly as "successful" as a correct one.</p>
+    <p>A typecheck passing and a render completing tell you nothing about whether the layout fits inside its own canvas. Looking at the rendered image is the only reliable check. If that step gets skipped, a clipped result ships looking exactly as "successful" as a correct one.</p>
 
     <h3>2. Fidelity checks catch wrong text, not missing text</h3>
-    <p>The shipped poster never states which Sunday the event is on. The source circular had a date on it; the standalone poster doesn't. Every individual fact that made it in was accurate — the miss was something the model didn't know it had dropped. Reviewing an LLM's output for correctness isn't the same as reviewing it for completeness, and this workflow doesn't remove the need for a human pass before anything goes out the door.</p>
+    <p>The shipped poster never states which Sunday the event is on. The source circular had a date; the poster doesn't. Every individual fact that made it in was accurate. The miss was something the model didn't know it had dropped. Reviewing correctness isn't the same as reviewing completeness.</p>
 
-    <h3>3. The pattern-matching was pre-paid</h3>
-    <p>This worked cleanly because earlier work in the codebase left comments explaining design intent, not just code. On a codebase without that groundwork, "follow our established patterns" has nothing to infer from — it degrades into the model guessing.</p>
+    <h3>3. The pattern-matching relied on groundwork</h3>
+    <p>This worked because the codebase had comments explaining design intent, not just code. Without that foundation, "follow our established patterns" degrades into the model guessing.</p>
 
-    <h3>4. The real session wasn't a straight line</h3>
-    <p>Partway through, before the component was finished, the session shifted into a planning step for the remaining work. Harmless, but worth naming: the actual path from prompt to poster is rarely as tidy as a written retelling makes it look.</p>
+    <h3>4. The session had twists</h3>
+    <p>Partway through, the work shifted into a planning step for the remaining work. The actual path from prompt to poster is rarely as linear as a retelling makes it sound.</p>
 
-    <h3>5. Invented copy needs a human sign-off</h3>
-    <p>The call-to-action line on the shipped poster wasn't in the source circular — the model wrote it because the established pattern called for one, and the source document didn't supply it. It's a genuine improvement over what was there. It's also not a faithful reproduction of an official notice anymore. For anything representing a real organization, synthesized copy needs someone to actually read and approve it before it goes out as that organization's voice.</p>
+    <h3>5. Invented copy needs approval</h3>
+    <p>The call-to-action line on the shipped poster wasn't in the source circular. The model wrote it because the pattern called for one. It's an improvement, but it's also not a faithful reproduction of the official notice anymore. For anything representing a real organization, synthesized copy needs sign-off before it goes out as that organization's voice.</p>
 
     <h2>Where this leaves off</h2>
 
-    <p>The pitch here was never "faster than Canva." It's "faster than a blank canvas, with a human still finishing the job." For internal, low-stakes, one-off announcements, that trade is an easy one. The moment stakes rise — an official notice, anything customer-facing, anything that needs a signature before it's real — the review step in section five stops being optional and becomes the whole point.</p>
+    <p>The pitch was never "faster than Canva." It's "faster than a blank canvas, with a human still finishing the job." For internal, low-stakes, one-off announcements, that trade works. The moment stakes rise (an official notice, anything customer-facing, anything that needs a signature before it's real) the review step stops being optional and becomes the whole point.</p>
 
-    <p>This covers the static case only. The same project produces short animated pieces the same way, with a timeline instead of a single frame — that's a different set of tradeoffs, and a different post.</p>
+    <p>This is the static case. The same project also produces short animated pieces, which come with a different set of tradeoffs. That's a different post.</p>
   </article>
 </template>
 
@@ -125,7 +119,7 @@ definePageMeta({
   layout: 'dark'
 })
 
-useHead({ title: 'Using an LLM to Draft Static Infographics with Remotion — tomatamagotato' })
+useHead({ title: 'Using an LLM to Draft Static Infographics with Remotion | tomatamagotato' })
 </script>
 
 <style src="~/assets/css/post.css"></style>
