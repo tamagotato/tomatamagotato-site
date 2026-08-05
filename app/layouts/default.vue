@@ -1,5 +1,5 @@
 <template>
-  <div :class="themeClass">
+  <div>
     <SiteNav />
     <main>
       <slot />
@@ -9,6 +9,7 @@
 </template>
 
 <script setup lang="ts">
-const { themeClass, init } = useTheme()
+// Theme class lives on <html>; see dark.vue for why it is not set here.
+const { init } = useTheme()
 onMounted(init)
 </script>

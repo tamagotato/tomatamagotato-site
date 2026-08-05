@@ -1,6 +1,8 @@
-/* ── Home: Light Theme ── */
-body.theme-light,
-.theme-light {
+/* ── Home: Light Theme ──
+   The theme class sits on <html>; body needs the background set explicitly
+   because background-color does not inherit. */
+.theme-light,
+.theme-light body {
   background: #f5f2ea;
   color: #1a1a1a;
 }
@@ -192,8 +194,8 @@ body.theme-light,
 }
 
 /* ── Dark Mode ── */
-body.theme-dark,
-.theme-dark {
+.theme-dark,
+.theme-dark body {
   background: #0f0f0f;
   color: #f0ece4;
 }

@@ -47,6 +47,40 @@ html { scroll-behavior: smooth; }
 img { max-width: 100%; display: block; }
 a { color: inherit; }
 
+/* ── Theme Surfaces ──
+   The theme class lives on <html>. background-color does not inherit, so both
+   html and body are set explicitly; otherwise pages whose stylesheet omits a
+   background rely on canvas propagation and render transparent. */
+.theme-light,
+.theme-light body {
+  background: #f5f2ea;
+  color: #1a1a1a;
+}
+
+.theme-dark,
+.theme-dark body {
+  background: #0f0f0f;
+  color: #f0ece4;
+}
+
+/* ── Theme Transition ──
+   Cross-fades colour when the theme class swaps. Wrapped in :where() so this
+   carries zero specificity and never overrides the component-level transitions
+   in home.css / post.css / report.css, which own their hover and reveal motion. */
+:where(.theme-light, .theme-dark),
+:where(.theme-light, .theme-dark) :where(*) {
+  transition-property: background-color, border-color, color;
+  transition-duration: 150ms;
+  transition-timing-function: ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.theme-light, .theme-dark),
+  :where(.theme-light, .theme-dark) :where(*) {
+    transition-duration: 0ms;
+  }
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
   line-height: 1.6;
@@ -119,6 +153,27 @@ main { flex: 1; }
   display: flex;
   gap: 24px;
   align-items: center;
+  /* The logo is allowed to truncate before the links do; without this the two
+     collide and push the toggle off-screen on narrow viewports. */
+  flex-shrink: 0;
+}
+
+.nav-logo {
+  min-width: 0;
+}
+
+.nav-logo-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .site-nav { padding: 4px 16px; gap: 12px; }
+  .nav-links { gap: 14px; }
+  .nav-link { font-size: 0.88rem; }
+  /* Wordmark drops on the smallest screens; the badge still identifies the site. */
+  .nav-logo-name { display: none; }
 }
 
 .nav-link {

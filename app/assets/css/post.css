@@ -1,6 +1,6 @@
 /* ── Blog Post: Dark Theme ── */
-body.theme-dark,
-.theme-dark {
+.theme-dark,
+.theme-dark body {
   background: #0f0f0f;
   color: #ddd5cc;
 }
