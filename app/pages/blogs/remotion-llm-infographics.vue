@@ -1,13 +1,13 @@
 <template>
   <article class="post">
-    <h1 class="post-title">Using an LLM to Draft Static Infographics with Remotion</h1>
+    <h1 class="post-title">Using an LLM to draft static infographics with Remotion</h1>
     <time class="post-date">July 24, 2026</time>
 
-    <p>Every internal announcement (a policy notice, an event flyer, a community circular) starts with the same tax: open a blank canvas, pick a layout, fight with alignment, ship something that looks like it took longer than it should have. For one-off internal communications, that tax is rarely worth paying by hand.</p>
+    <p>Every internal announcement starts the same way. You open a blank canvas, pick a layout, fight with alignment, and ship something that looks like it took longer than it should have. For a one-off policy notice or event flyer, that is rarely worth doing by hand.</p>
 
     <p>I found a small workflow that skips most of that tax, and I've been genuinely happy using it, so I wanted to write it up. It doesn't replace anything or rework how I work. It's just a nice little shortcut: an LLM turns a rough source document into a structured static infographic, rendered by <a href="https://www.remotion.dev/" target="_blank" rel="noopener">Remotion</a>, a framework built for programmatically generating video that also happens to render a single still frame just fine.</p>
 
-    <h2>Why Remotion, not Canva or Figma</h2>
+    <h2>Why Remotion and not Canva or Figma</h2>
 
     <p>Remotion isn't a competitor to Canva or Figma here. It's a first draft.</p>
 
@@ -89,7 +89,7 @@ reference/fun-run-guidelines.jpg. follow our established CTA patterns</code></pr
 
     <h2>Where this actually breaks</h2>
 
-    <p>There are real limitations worth knowing before you trust this pattern for something that matters.</p>
+    <p>Five limitations worth knowing before you trust this for something that matters.</p>
 
     <h3>1. Overflow fails silently</h3>
     <p>A typecheck passing and a render completing tell you nothing about whether the layout fits inside its own canvas. Looking at the rendered image is the only reliable check. If that step gets skipped, a clipped result ships looking exactly as "successful" as a correct one.</p>
@@ -108,7 +108,7 @@ reference/fun-run-guidelines.jpg. follow our established CTA patterns</code></pr
 
     <h2>Where this leaves off</h2>
 
-    <p>The pitch was never "faster than Canva." It's "faster than a blank canvas, with a human still finishing the job." For internal, low-stakes, one-off announcements, that trade works. The moment stakes rise (an official notice, anything customer-facing, anything that needs a signature before it's real) the review step stops being optional and becomes the whole point.</p>
+    <p>This is not faster than Canva. It's faster than a blank canvas, and a human still finishes the job. For low-stakes internal announcements, that trade works. Once the stakes rise, say an official notice or anything customer-facing, the review step stops being optional and becomes most of the work.</p>
 
     <p>This is the static case. The same project also produces short animated pieces, which come with a different set of tradeoffs. That's a different post.</p>
   </article>

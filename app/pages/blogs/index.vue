@@ -6,14 +6,14 @@
       <li>
         <a class="blog-index-card" href="/blogs/remotion-llm-infographics">
           <time>July 24, 2026</time>
-          <h2>Using an LLM to Draft Static Infographics with Remotion</h2>
-          <p>A real worked example: turning a photographed community circular into a mobile-formatted poster — and the five specific ways this workflow actually breaks.</p>
+          <h2>Using an LLM to draft static infographics with Remotion</h2>
+          <p>A worked example: turning a photographed community circular into a mobile-formatted poster, plus the five specific ways this workflow breaks.</p>
         </a>
       </li>
       <li>
         <a class="blog-index-card" href="/blogs/wfh-philippines">
           <time>March 22, 2026</time>
-          <h2>How Filipino Workers Lost WFH — and Who They Blame</h2>
+          <h2>How Filipino Workers Lost WFH, and Who They Blame</h2>
           <p>Sentiment analysis across Reddit, Twitter/X, Facebook, and TikTok. Covering PEZA policy, the BPO industry, Manila's commute crisis, and cultural fault lines.</p>
         </a>
       </li>
@@ -26,7 +26,7 @@ definePageMeta({
   layout: 'dark'
 })
 
-useHead({ title: 'Writing — tomatamagotato' })
+useHead({ title: 'Writing | tomatamagotato' })
 </script>
 
 <style src="~/assets/css/post.css"></style>
