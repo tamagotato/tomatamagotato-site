@@ -2,8 +2,8 @@
   <div class="work-page">
 
     <div class="work-intro">
-      <h1>I design systems that make organizations work.</h1>
-      <p>Operating models, enforcement logic, data visibility, cross-functional alignment. I work at the intersection of operations, product, and engineering — translating ambiguous problems into structured, scalable solutions.</p>
+      <h1>I build the <span class="ink-underline">rules<svg viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2,8 C18,3 32,10 50,6 C66,3 82,9 98,5" /></svg></span> into the system, so nobody has to enforce them by hand.</h1>
+      <p>I work between operations, product, and engineering. Most of what I do is turning a policy that lives in someone's head, or a spreadsheet, into something the software checks on its own.</p>
     </div>
 
     <p class="work-section-label">selected work</p>
@@ -11,38 +11,86 @@
 
       <div class="work-card">
         <div class="work-card-header">
-          <h3>Attendance & Utilization Tracking System</h3>
+          <h3>Attendance and utilization tracking</h3>
           <span class="work-tag">workforce systems</span>
         </div>
-        <p>Designed and oversaw implementation of an end-to-end attendance system with enforced dependencies — timesheet submission gates access to downstream workflows, eliminating manual policing of compliance. Introduced configurable activity tracking to support multi-stream service delivery across teams.</p>
-        <p class="work-card-outcome">↳ Reduced manual exception handling. Compliance enforced at the system level, not by management overhead.</p>
+        <p>An end-to-end attendance system with enforced dependencies: submitting a timesheet is what unlocks the next workflow, so compliance stops being something managers chase. Activity tracking is configurable to handle teams running several service streams at once.</p>
+        <div class="work-shift">
+          <div class="work-shift-half">
+            <span class="work-shift-label">Before</span>
+            <strong>Managers chase people for timesheets</strong>
+          </div>
+          <div class="work-shift-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h16" /><path d="M13 6l6 6-6 6" /></svg>
+          </div>
+          <div class="work-shift-half is-after">
+            <span class="work-shift-label">After</span>
+            <strong>The workflow stays locked until it's submitted</strong>
+          </div>
+        </div>
       </div>
 
       <div class="work-card">
         <div class="work-card-header">
-          <h3>Overtime Governance Framework</h3>
+          <h3>Overtime governance</h3>
           <span class="work-tag">process governance</span>
         </div>
-        <p>Built overtime tracking with validation logic that enforces policy constraints before approval is granted. Replaced spreadsheet-based tracking and ad-hoc approvals with a structured workflow that surfaces policy violations before they become payroll problems.</p>
-        <p class="work-card-outcome">↳ Policy enforced at the point of request, not after the fact. Supervisor workload reduced.</p>
+        <p>Overtime tracking with validation that runs before approval, not after. It replaced spreadsheet tracking and ad-hoc sign-off, so a request that breaks policy gets caught at the point it's filed instead of surfacing later as a payroll problem.</p>
+        <div class="work-shift">
+          <div class="work-shift-half">
+            <span class="work-shift-label">Before</span>
+            <strong>Policy breaches found at payroll</strong>
+          </div>
+          <div class="work-shift-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h16" /><path d="M13 6l6 6-6 6" /></svg>
+          </div>
+          <div class="work-shift-half is-after">
+            <span class="work-shift-label">After</span>
+            <strong>Caught when the request is filed</strong>
+          </div>
+        </div>
       </div>
 
       <div class="work-card">
         <div class="work-card-header">
-          <h3>Multi-Dimensional Operations Dashboard</h3>
+          <h3>Operations dashboard</h3>
           <span class="work-tag">data reporting</span>
         </div>
-        <p>Designed reporting tools enabling leadership visibility across teams, clients, and timeframes simultaneously. Built hybrid data-fetching and caching strategies to keep dashboards fast under high usage. Defined the metrics and data model, collaborated with engineering on implementation.</p>
-        <p class="work-card-outcome">↳ Leadership decision-making moved from reactive to data-informed. Single source of truth across functions.</p>
+        <p>Reporting that lets leadership look across teams, clients, and timeframes at the same time. I defined the metrics and the data model and worked with engineering on the build, including the caching and fetching strategy that keeps it fast under load.</p>
+        <div class="work-shift">
+          <div class="work-shift-half">
+            <span class="work-shift-label">Before</span>
+            <strong>Each function reporting its own numbers</strong>
+          </div>
+          <div class="work-shift-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h16" /><path d="M13 6l6 6-6 6" /></svg>
+          </div>
+          <div class="work-shift-half is-after">
+            <span class="work-shift-label">After</span>
+            <strong>One source everyone reads from</strong>
+          </div>
+        </div>
       </div>
 
       <div class="work-card">
         <div class="work-card-header">
-          <h3>Cross-Functional Workflow Standardization</h3>
+          <h3>Workflow standardization</h3>
           <span class="work-tag">operational design</span>
         </div>
-        <p>Mapped and redesigned inconsistent workflows across operations, HR, and finance. Translated operational intent into system logic — validations, role-based access, and enforced step sequences — so process compliance is built in, not bolted on.</p>
-        <p class="work-card-outcome">↳ Reduced process drift. Teams operate from shared, enforceable workflows instead of institutional memory.</p>
+        <p>Mapped and redesigned workflows that had drifted apart across operations, HR, and finance. The operational intent became system logic: validations, role-based access, and step sequences that have to happen in order.</p>
+        <div class="work-shift">
+          <div class="work-shift-half">
+            <span class="work-shift-label">Before</span>
+            <strong>Every team working from memory</strong>
+          </div>
+          <div class="work-shift-arrow" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h16" /><path d="M13 6l6 6-6 6" /></svg>
+          </div>
+          <div class="work-shift-half is-after">
+            <span class="work-shift-label">After</span>
+            <strong>One workflow the system holds them to</strong>
+          </div>
+        </div>
       </div>
 
     </div>
@@ -50,39 +98,13 @@
     <p class="work-section-label">how I work</p>
     <div class="work-approach">
       <ul class="approach-list">
-        <li class="approach-item">
-          <div class="approach-dot"></div>
+        <li v-for="item in approach" :key="item.title" class="approach-item">
+          <svg class="approach-mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 13l5 5L20 5" />
+          </svg>
           <div>
-            <strong>Systems thinking</strong>
-            <span>I design solutions that account for dependencies, edge cases, and long-term scale — not just the happy path.</span>
-          </div>
-        </li>
-        <li class="approach-item">
-          <div class="approach-dot"></div>
-          <div>
-            <strong>Problem definition first</strong>
-            <span>I operate in ambiguous environments. Breaking a vague problem into solvable components is usually the hardest and most valuable part of the work.</span>
-          </div>
-        </li>
-        <li class="approach-item">
-          <div class="approach-dot"></div>
-          <div>
-            <strong>Data-informed</strong>
-            <span>I use metrics and observable behavior to guide decisions — not assumptions about what users or teams should be doing.</span>
-          </div>
-        </li>
-        <li class="approach-item">
-          <div class="approach-dot"></div>
-          <div>
-            <strong>Influence without authority</strong>
-            <span>I drive alignment across operations, product, HR, finance, and engineering through clarity and design — not hierarchy.</span>
-          </div>
-        </li>
-        <li class="approach-item">
-          <div class="approach-dot"></div>
-          <div>
-            <strong>Self-sustaining solutions</strong>
-            <span>A solution that requires constant manual oversight isn't finished. I build systems that enforce their own rules.</span>
+            <strong>{{ item.title }}</strong>
+            <span>{{ item.body }}</span>
           </div>
         </li>
       </ul>
@@ -92,7 +114,30 @@
 </template>
 
 <script setup lang="ts">
-useHead({ title: 'Work — tomatamagotato' })
+useHead({ title: 'Work | tomatamagotato' })
+
+const approach = [
+  {
+    title: 'Systems thinking',
+    body: 'I design for the dependencies and edge cases, not just the path where everything goes right.'
+  },
+  {
+    title: 'Problem definition first',
+    body: 'Breaking a vague problem into solvable pieces is usually the hardest part, and where most of the value is.'
+  },
+  {
+    title: 'Data-informed',
+    body: 'I go by what people actually do in the system, not what we assumed they would do.'
+  },
+  {
+    title: 'Influence without authority',
+    body: 'Getting operations, product, HR, finance, and engineering to agree is a design problem, not a reporting-line problem.'
+  },
+  {
+    title: 'Self-sustaining solutions',
+    body: "A fix that needs someone watching it isn't finished. The system should enforce its own rules."
+  }
+]
 </script>
 
 <style src="~/assets/css/work.css"></style>
