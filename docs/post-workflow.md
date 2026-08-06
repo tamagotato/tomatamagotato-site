@@ -228,5 +228,40 @@ If video posts do eventually land on the site, they run through the written
 process above for the companion piece. The writing is a real piece that stands
 on its own for someone who does not press play, not a description of the video.
 
+### Posable Blueman component set
+
+Not scoped, not started. Raised during the leadership post (2026-08-06), where
+the art plan was cut to typography because the pose the essay wanted did not
+exist and could not be assembled from what does.
+
+The problem: everything in `public/img/` is a finished flat PNG. Blueman exists
+as faces and one-off gag pieces, mostly forward-facing. There is no way to get a
+new pose out of the existing library, so every post that wants a specific pose is
+blocked on drawing one from scratch.
+
+Rough shape of the idea: break Blueman into separately drawn parts, head, body,
+arms, and a set of swappable faces, so poses become composition rather than
+illustration. Once the parts exist, the standing Remotion project at
+`trash-to-cashback` can place and rotate them into stills for posts, and a video
+editor such as OpenCut can animate them for vlog work. Same parts feeding both.
+
+Open questions to settle before building it:
+
+- Which parts, and how many joints. Too few and the poses stay stiff, too many
+  and the drawing effort defeats the point.
+- Whether the parts get drawn once by hand or whether existing art can be cut
+  apart. Cutting is faster and likely produces visible seams on the ink outline.
+- Whether the 2px black outline survives rotation. Parts drawn with a closed
+  outline show gaps at the joints when moved, which usually means overlap
+  allowances baked into each part.
+- Where the parts live. A shared location both this repo and the Remotion
+  project can reach, versus duplicating them.
+- Whether stills for posts and frames for video want the same source parts at
+  the same resolution.
+
+Until this exists, posts that want illustration are limited to the finished PNGs
+already in `public/img/`, and the honest fallback is typographic treatment
+instead, which is what the leadership post shipped with.
+
 Do not scaffold a new Remotion project for this. `trash-to-cashback` is the
 standing one.
