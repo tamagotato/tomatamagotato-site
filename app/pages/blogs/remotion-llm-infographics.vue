@@ -134,7 +134,7 @@ useHead({ title: 'Using an LLM to Draft Static Infographics with Remotion | toma
 .post-caption {
   margin-top: -12px;
   font-size: 0.82rem;
-  color: #888;
+  color: var(--post-muted);
   font-style: italic;
 }
 
@@ -142,11 +142,11 @@ useHead({ title: 'Using an LLM to Draft Static Infographics with Remotion | toma
 .post td {
   text-align: left;
   padding: 10px 14px;
-  border-bottom: 1px solid #2a2a2a;
+  border-bottom: 1px solid var(--post-border);
 }
 
 .post th {
-  color: #8aaa55;
+  color: var(--post-accent);
   font-weight: 700;
   text-transform: uppercase;
   font-size: 0.75rem;
@@ -154,6 +154,6 @@ useHead({ title: 'Using an LLM to Draft Static Infographics with Remotion | toma
 }
 
 .post td {
-  color: #ddd5cc;
+  color: var(--post-body);
 }
 </style>

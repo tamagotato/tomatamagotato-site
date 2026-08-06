@@ -1,8 +1,43 @@
-/* ── Blog Post: Dark Theme ── */
+/* ── Blog Post: theme tokens ──
+   Colors are declared once here as custom properties and consumed below,
+   so a rule never has to be duplicated per theme. Both blocks must define
+   the same set of names. Adding a token means adding it to BOTH. */
 .theme-dark,
 .theme-dark body {
   background: #0f0f0f;
   color: #ddd5cc;
+}
+
+.theme-dark {
+  --post-heading: #f0ece4;
+  --post-heading-sub: #e8e0d6;
+  --post-body: #ddd5cc;
+  --post-muted: #888;
+  --post-accent: #8aaa55;
+  --post-rule: #6b8c3e;
+  --post-surface: #1a1a1a;
+  --post-border: #2a2a2a;
+  --post-shadow: rgba(0, 0, 0, 0.3);
+  --post-ink: #000;
+  --post-panel: #22201e;
+  --post-panel-text: #ddd5cc;
+  --post-on-accent: #0f0f0f;
+}
+
+.theme-light {
+  --post-heading: #1a1a1a;
+  --post-heading-sub: #2c2c2c;
+  --post-body: #33302b;
+  --post-muted: #6d6862;
+  --post-accent: #55702f;
+  --post-rule: #6b8c3e;
+  --post-surface: #ebe6da;
+  --post-border: #d8d2c4;
+  --post-shadow: rgba(107, 140, 62, 0.12);
+  --post-ink: #1a1a1a;
+  --post-panel: #f5f2ea;
+  --post-panel-text: #33302b;
+  --post-on-accent: #f5f2ea;
 }
 
 .post {
@@ -17,13 +52,13 @@
   line-height: 1.2;
   margin-bottom: 8px;
   letter-spacing: -0.02em;
-  color: #f0ece4;
+  color: var(--post-heading);
 }
 
 .post-date {
   display: block;
   font-size: 0.85rem;
-  color: #8aaa55;
+  color: var(--post-accent);
   margin-bottom: 40px;
   font-weight: 600;
   text-transform: uppercase;
@@ -34,54 +69,64 @@
   font-size: 1.5rem;
   font-weight: 700;
   margin: 48px 0 16px;
-  color: #f0ece4;
+  color: var(--post-heading);
 }
 
 .post h3 {
   font-size: 1.15rem;
   font-weight: 700;
   margin: 32px 0 12px;
-  color: #e8e0d6;
+  color: var(--post-heading-sub);
 }
 
 .post p {
   margin-bottom: 16px;
   line-height: 1.7;
+  color: var(--post-body);
 }
 
-.post strong { color: #f0ece4; }
+.post strong { color: var(--post-heading); }
 
 .post a {
-  color: #8aaa55;
+  color: var(--post-accent);
   text-decoration: none;
 }
 
 .post a:hover { text-decoration: underline; }
 
 .post blockquote {
-  border-left: 3px solid #6b8c3e;
+  border-left: 3px solid var(--post-rule);
   padding: 12px 20px;
   margin: 24px 0;
-  background: #1a1a1a;
+  background: var(--post-surface);
   border-radius: 0 8px 8px 0;
-  color: #888;
+  color: var(--post-muted);
   font-style: italic;
 }
 
 .post code {
-  background: #1a1a1a;
+  background: var(--post-surface);
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 0.9em;
-  color: #8aaa55;
+  color: var(--post-accent);
 }
 
 .post pre {
-  background: #1a1a1a;
+  background: var(--post-surface);
   padding: 16px;
   border-radius: 8px;
   overflow-x: auto;
   margin: 24px 0;
+  border: 1px solid var(--post-border);
+}
+
+/* pre > code inherits the block background; the chip styling is only
+   correct for inline code. */
+.post pre code {
+  background: none;
+  padding: 0;
+  color: var(--post-body);
 }
 
 .post img {
@@ -100,13 +145,13 @@
   font-size: 2rem;
   font-weight: 900;
   margin-bottom: 8px;
-  color: #f0ece4;
+  color: var(--post-heading);
   letter-spacing: -0.03em;
 }
 
 .blog-index-subtitle {
   font-size: 0.9rem;
-  color: #888;
+  color: var(--post-muted);
   margin-bottom: 40px;
 }
 
@@ -120,32 +165,32 @@
 .blog-index-card {
   display: block;
   padding: 20px 24px;
-  background: #1a1a1a;
-  border: 1px solid #2a2a2a;
+  background: var(--post-surface);
+  border: 1px solid var(--post-border);
   border-left: 3px solid transparent;
   border-radius: 10px;
   text-decoration: none;
-  color: #ddd5cc;
+  color: var(--post-body);
   transition: border-left-color 0.2s, transform 0.2s, box-shadow 0.2s;
 }
 
 .blog-index-card:hover {
-  border-left-color: #8aaa55;
+  border-left-color: var(--post-accent);
   transform: translateY(-2px);
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 16px var(--post-shadow);
 }
 
 .blog-index-card h2 {
   font-size: 1rem;
   font-weight: 700;
   margin: 0 0 4px;
-  color: #f0ece4;
+  color: var(--post-heading);
 }
 
 .blog-index-card time {
   display: block;
   font-size: 0.75rem;
-  color: #8aaa55;
+  color: var(--post-accent);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -154,7 +199,7 @@
 
 .blog-index-card p {
   font-size: 0.88rem;
-  color: #888;
+  color: var(--post-muted);
   margin-top: 0;
   line-height: 1.5;
 }
