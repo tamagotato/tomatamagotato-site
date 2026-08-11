@@ -1,0 +1,48 @@
+/* ── Case Study Pages ──
+   Shared by all /work/<slug> sub-pages. Same ink visual language as work.css:
+   thick outlines, flat fills, hard offset shadows. */
+
+.case-study-page {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 56px 24px 96px;
+}
+
+.case-study-back {
+  display: inline-block;
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-decoration: none;
+  margin-bottom: 32px;
+  color: #6b8c3e;
+}
+
+.case-study-back:hover { opacity: 0.75; }
+
+.case-study-intro {
+  max-width: 620px;
+  margin-bottom: 40px;
+}
+
+.case-study-intro h1 {
+  font-size: clamp(1.7rem, 3.6vw, 2.3rem);
+  font-weight: 800;
+  color: #1a1a1a;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin-bottom: 14px;
+}
+
+.case-study-intro p {
+  font-size: 1.02rem;
+  color: #4a4a4a;
+  line-height: 1.7;
+}
+
+.theme-dark .case-study-back { color: #8aaa55; }
+.theme-dark .case-study-intro h1 { color: #f0ece4; }
+.theme-dark .case-study-intro p { color: #a9a29a; }
+
+@media (max-width: 640px) {
+  .case-study-page { padding: 40px 20px 64px; }
+}
