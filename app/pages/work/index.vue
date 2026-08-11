@@ -9,11 +9,12 @@
     <p class="work-section-label">selected work</p>
     <div class="work-projects">
 
-      <div class="work-card">
+      <a class="work-card work-card-link" href="/work/attendance-utilization">
         <div class="work-card-header">
           <h3>Attendance and utilization tracking</h3>
           <span class="work-tag">workforce systems</span>
         </div>
+        <span class="work-case-badge">case study &rarr;</span>
         <p>An end-to-end attendance system with enforced dependencies: submitting a timesheet is what unlocks the next workflow, so compliance stops being something managers chase. Activity tracking is configurable to handle teams running several service streams at once.</p>
         <div class="work-shift">
           <div class="work-shift-half">
@@ -28,13 +29,14 @@
             <strong>The workflow stays locked until it's submitted</strong>
           </div>
         </div>
-      </div>
+      </a>
 
-      <div class="work-card">
+      <a class="work-card work-card-link" href="/work/overtime-governance">
         <div class="work-card-header">
           <h3>Overtime governance</h3>
           <span class="work-tag">process governance</span>
         </div>
+        <span class="work-case-badge">case study &rarr;</span>
         <p>Overtime tracking with validation that runs before approval, not after. It replaced spreadsheet tracking and ad-hoc sign-off, so a request that breaks policy gets caught at the point it's filed instead of surfacing later as a payroll problem.</p>
         <div class="work-shift">
           <div class="work-shift-half">
@@ -49,7 +51,7 @@
             <strong>Caught when the request is filed</strong>
           </div>
         </div>
-      </div>
+      </a>
 
       <div class="work-card">
         <div class="work-card-header">
@@ -72,11 +74,12 @@
         </div>
       </div>
 
-      <div class="work-card">
+      <a class="work-card work-card-link" href="/work/workflow-standardization">
         <div class="work-card-header">
           <h3>Workflow standardization</h3>
           <span class="work-tag">operational design</span>
         </div>
+        <span class="work-case-badge">case study &rarr;</span>
         <p>Mapped and redesigned workflows that had drifted apart across operations, HR, and finance. The operational intent became system logic: validations, role-based access, and step sequences that have to happen in order.</p>
         <div class="work-shift">
           <div class="work-shift-half">
@@ -91,7 +94,7 @@
             <strong>One workflow the system holds them to</strong>
           </div>
         </div>
-      </div>
+      </a>
 
     </div>
 

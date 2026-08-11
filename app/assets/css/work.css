@@ -116,6 +116,34 @@
   box-shadow: 8px 8px 0 #3ec6f0;
 }
 
+/* ── Case-study links ──
+   Cards 1, 2, 4 link out to a dedicated demo page; Card 3 (dashboard) has no
+   matching demo and stays a plain, non-interactive card. */
+.work-card-link {
+  text-decoration: none;
+  display: block;
+}
+
+.work-case-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #1a1a1a;
+  background: #f5f2ea;
+  border: 2px solid #1a1a1a;
+  padding: 3px 10px;
+  border-radius: 20px;
+  margin-top: 16px;
+}
+
+.theme-dark .work-case-badge {
+  color: #f0ece4;
+  background: #0f0f0f;
+  border-color: #3a3a3a;
+}
+
 .work-card-header {
   display: flex;
   align-items: baseline;
