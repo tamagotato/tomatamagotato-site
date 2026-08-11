@@ -1,12 +1,11 @@
 <template>
   <div class="video-tab-viewer">
-    <div class="video-tabs" role="tablist">
+    <div class="video-tabs">
       <button
         v-for="(clip, i) in clips"
         :key="clip.label"
         type="button"
-        role="tab"
-        :aria-selected="i === activeIndex"
+        :aria-pressed="i === activeIndex"
         class="video-tab"
         :class="{ 'is-active': i === activeIndex }"
         @click="activeIndex = i"
@@ -15,18 +14,22 @@
       </button>
     </div>
 
-    <p class="video-caption">{{ activeClip.caption }}</p>
+    <template v-if="activeClip">
+      <p class="video-caption">{{ activeClip.caption }}</p>
 
-    <div class="video-frame">
-      <video
-        :key="activeClip.src"
-        :src="activeClip.src"
-        autoplay
-        loop
-        muted
-        playsinline
-      />
-    </div>
+      <div class="video-frame">
+        <video
+          ref="videoEl"
+          :key="activeClip.src"
+          :src="activeClip.src"
+          :autoplay="!prefersReducedMotion"
+          :loop="!prefersReducedMotion"
+          :controls="prefersReducedMotion"
+          muted
+          playsinline
+        />
+      </div>
+    </template>
   </div>
 </template>
 
@@ -40,7 +43,14 @@ interface Clip {
 const props = defineProps<{ clips: Clip[] }>()
 
 const activeIndex = ref(0)
-const activeClip = computed(() => props.clips[activeIndex.value])
+const activeClip = computed(() => props.clips[activeIndex.value] ?? props.clips[0])
+
+const videoEl = ref<HTMLVideoElement | null>(null)
+const prefersReducedMotion = ref(false)
+
+onMounted(() => {
+  prefersReducedMotion.value = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+})
 </script>
 
 <style scoped>
@@ -64,8 +74,14 @@ const activeClip = computed(() => props.clips[activeIndex.value])
   transition: background 150ms ease, color 150ms ease;
 }
 
+.video-tab:focus-visible {
+  outline: 2px solid #3ec6f0;
+  outline-offset: 2px;
+}
+
 .video-tab.is-active {
   background: #3ec6f0;
+  box-shadow: 3px 3px 0 #1a1a1a;
 }
 
 .video-caption {
@@ -99,6 +115,7 @@ const activeClip = computed(() => props.clips[activeIndex.value])
   background: #3ec6f0;
   color: #0f0f0f;
   border-color: #0f0f0f;
+  box-shadow: 3px 3px 0 #000;
 }
 
 :global(.theme-dark) .video-caption {
