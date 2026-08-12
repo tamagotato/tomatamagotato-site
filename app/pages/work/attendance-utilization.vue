@@ -1,6 +1,6 @@
 <template>
   <div class="case-study-page">
-    <a class="case-study-back" href="/work">&larr; Back to work</a>
+    <NuxtLink class="case-study-back" to="/work">&larr; Back to work</NuxtLink>
 
     <div class="case-study-intro">
       <h1>Attendance and utilization tracking</h1>

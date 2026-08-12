@@ -9,7 +9,7 @@
     <p class="work-section-label">selected work</p>
     <div class="work-projects">
 
-      <a class="work-card work-card-link" href="/work/attendance-utilization">
+      <NuxtLink class="work-card work-card-link" to="/work/attendance-utilization">
         <div class="work-card-header">
           <h3>Attendance and utilization tracking</h3>
           <span class="work-tag">workforce systems</span>
@@ -29,9 +29,9 @@
             <strong>The workflow stays locked until it's submitted</strong>
           </div>
         </div>
-      </a>
+      </NuxtLink>
 
-      <a class="work-card work-card-link" href="/work/overtime-governance">
+      <NuxtLink class="work-card work-card-link" to="/work/overtime-governance">
         <div class="work-card-header">
           <h3>Overtime governance</h3>
           <span class="work-tag">process governance</span>
@@ -51,7 +51,7 @@
             <strong>Caught when the request is filed</strong>
           </div>
         </div>
-      </a>
+      </NuxtLink>
 
       <div class="work-card">
         <div class="work-card-header">
@@ -74,7 +74,7 @@
         </div>
       </div>
 
-      <a class="work-card work-card-link" href="/work/workflow-standardization">
+      <NuxtLink class="work-card work-card-link" to="/work/workflow-standardization">
         <div class="work-card-header">
           <h3>Workflow standardization</h3>
           <span class="work-tag">operational design</span>
@@ -94,7 +94,7 @@
             <strong>One workflow the system holds them to</strong>
           </div>
         </div>
-      </a>
+      </NuxtLink>
 
     </div>
 
