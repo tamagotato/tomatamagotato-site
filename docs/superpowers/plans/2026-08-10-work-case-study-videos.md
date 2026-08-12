@@ -6,7 +6,9 @@
 
 **Architecture:** Nine Remotion compositions (already built in the separate `RemotionStudio` project) get rendered to WebM and copied into this repo's `public/videos/work/`. A new shared `VideoTabViewer.vue` component renders a tab strip plus one ink-framed `<video>`, swapping the active clip on tab click. Three new pages under `app/pages/work/` each configure `VideoTabViewer` with their own clip list. `app/pages/work/index.vue` gets its cards 1, 2, and 4 wrapped as full-card links (matching the existing `.blog-index-card` link pattern) with a small badge added to signal they lead to a case study.
 
-**Tech Stack:** Nuxt 4 (static generation via `nuxi generate`), plain `<a href>` for internal nav (no NuxtLink in this codebase), hand-written CSS per page following the `.theme-light`/`.theme-dark` prefix pattern, Remotion CLI (via WSL) for video rendering.
+**Tech Stack:** Nuxt 4 (static generation via `nuxi generate`), hand-written CSS per page following the `.theme-light`/`.theme-dark` prefix pattern, Remotion CLI (via WSL) for video rendering.
+
+**Status: shipped (2026-08-12).** All 6 tasks implemented, reviewed, merged to `master`, and deployed via GitHub Pages. One post-merge revision: the plan's "no NuxtLink" constraint below was found to be factually wrong during final review (`SiteNav.vue` already used `NuxtLink`) and was reversed in a follow-up polish commit — `work-card-link` and the case-study back-links now use `<NuxtLink>` so navigation gets the site's existing page-transition fade instead of a full reload. The tab UI was also redesigned post-merge from pill-style buttons to folder/file tabs with a randomized 50ms-1s buffering state, per direct user feedback. See `app/components/work/VideoTabViewer.vue` for current behavior — it no longer matches every detail of Task 2's original code sample below, which is kept as historical record of the plan as executed.
 
 ## Global Constraints
 
@@ -17,7 +19,7 @@
 - Visual framing must match the existing ink language: `2px solid #1a1a1a` border, `box-shadow: 5px 5px 0 #1a1a1a` (light) / `5px 5px 0 #000` (dark), `border-radius: 14px` — same values `.work-card` already uses in `work.css`.
 - Card 3 (Operations dashboard) is explicitly out of scope — no link, no badge, no changes.
 - Filenames under `public/videos/work/` must be URL-safe: lowercase, hyphenated, no spaces (repo convention already enforced for `public/img/`).
-- Internal navigation uses plain `<a href="...">`, matching `.blog-index-card` — this codebase does not use `<NuxtLink>`.
+- ~~Internal navigation uses plain `<a href="...">`, matching `.blog-index-card` — this codebase does not use `<NuxtLink>`.~~ **Superseded post-merge:** this claim was wrong (`SiteNav.vue` already used `NuxtLink`); case-study links now use `<NuxtLink>` for client-side transitions. See Status note above.
 
 ---
 
@@ -39,7 +41,7 @@
 
 **Context:** One test render already exists at `C:\Users\warri\personalProjects\RemotionStudio\out\webm\attendance.webm` (223KB, confirmed working, `vp8` codec). The other 8 Remotion composition IDs are already registered in `RemotionStudio/src/Root.tsx`: `WorkMockupActivityTracker`, `WorkMockupGrouping`, `WorkMockupBulkOps`, `WorkMockupBulkAdjustment`, `WorkMockupMarkRest`, `WorkMockupPartialFailure`, `WorkMockupNightShift`, `WorkMockupPastWeeks`. Remotion CLI only runs inside WSL from this Windows checkout (POSIX-only bin shims) — invoke via `wsl.exe -- bash -lc "cd /mnt/c/Users/warri/personalProjects/RemotionStudio && ..."`.
 
-- [ ] **Step 1: Render the 8 remaining compositions to WebM**
+- [x] **Step 1: Render the 8 remaining compositions to WebM**
 
 Run each of these from the Windows shell (WSL invocation wraps every command):
 
@@ -56,7 +58,7 @@ wsl.exe -- bash -lc "cd /mnt/c/Users/warri/personalProjects/RemotionStudio && np
 
 Expected: each command ends with a line like `+  out/webm/<name>.webm  <size> kB`, no errors.
 
-- [ ] **Step 2: Verify all 9 files exist and are non-trivially sized**
+- [x] **Step 2: Verify all 9 files exist and are non-trivially sized**
 
 ```bash
 wsl.exe -- bash -lc "ls -la /mnt/c/Users/warri/personalProjects/RemotionStudio/out/webm/"
@@ -64,7 +66,7 @@ wsl.exe -- bash -lc "ls -la /mnt/c/Users/warri/personalProjects/RemotionStudio/o
 
 Expected: 9 `.webm` files listed, each larger than 20KB (a near-empty/failed render would be a few hundred bytes).
 
-- [ ] **Step 3: Copy all 9 files into this repo's public assets**
+- [x] **Step 3: Copy all 9 files into this repo's public assets**
 
 ```bash
 mkdir -p "C:\Users\warri\personalProjects\tomatamagotato-site\public\videos\work"
@@ -76,7 +78,7 @@ Then copy (Windows path, from the Bash tool):
 cp /c/Users/warri/personalProjects/RemotionStudio/out/webm/*.webm "/c/Users/warri/personalProjects/tomatamagotato-site/public/videos/work/"
 ```
 
-- [ ] **Step 4: Verify the copy landed correctly**
+- [x] **Step 4: Verify the copy landed correctly**
 
 ```bash
 ls -la "C:\Users\warri\personalProjects\tomatamagotato-site\public\videos\work"
@@ -84,7 +86,7 @@ ls -la "C:\Users\warri\personalProjects\tomatamagotato-site\public\videos\work"
 
 Expected: exactly these 9 files present — `attendance.webm`, `activity-tracker.webm`, `grouping.webm`, `night-shift.webm`, `past-weeks.webm`, `add-ot.webm`, `partial-failure.webm`, `create-adjustment.webm`, `mark-rest.webm`.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add public/videos/work/
@@ -111,7 +113,7 @@ git commit -m "feat: add case-study demo videos for the Work page"
 
 **Context:** No existing component in this repo does tabbed switching, so there's no local pattern to follow beyond the general `.theme-light`/`.theme-dark` prefixing convention used throughout `work.css` and `global.css`. Styling values (border, shadow, radius) must match `.work-card` exactly, per the Global Constraints section above.
 
-- [ ] **Step 1: Write the component**
+- [x] **Step 1: Write the component**
 
 ```vue
 <template>
@@ -230,7 +232,7 @@ const activeClip = computed(() => props.clips[activeIndex.value])
 
 Note: `:key="activeClip.src"` on the `<video>` forces Vue to destroy and recreate the element on tab switch, which stops the previous clip's playback rather than leaving it running detached in memory — this satisfies the "only the active tab's video may be playing" constraint without extra lifecycle code.
 
-- [ ] **Step 2: Manual verification (no test framework in this repo — confirmed via CLAUDE.md: "There is no test suite and no linter configured")**
+- [x] **Step 2: Manual verification (no test framework in this repo — confirmed via CLAUDE.md: "There is no test suite and no linter configured")**
 
 Run the dev server and check the component renders with placeholder data. Create a temporary scratch check by running:
 
@@ -240,7 +242,7 @@ npm run dev
 
 Then in a browser at the dev server's local URL, navigate to any page and confirm no console errors are thrown by importing the component (it won't be wired into a page until Task 3, so this step just confirms the file is syntactically valid — proceed if `npm run dev` starts cleanly with no Vue compiler errors referencing `VideoTabViewer.vue`).
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/components/work/VideoTabViewer.vue
@@ -261,7 +263,7 @@ git commit -m "feat: add VideoTabViewer component for case-study demo pages"
 
 **Context:** This is the first of the 3 sub-pages and establishes the shared page-shell markup and CSS that Tasks 4 and 5 will reuse verbatim (only the intro copy, back-link text, and `clips` array differ between the three). Follows the intro-heading pattern already used in `work/index.vue` (`.work-intro h1` / `p`) and the back-link pattern from `.blog-index-card` for consistency, but as a single link rather than a card grid.
 
-- [ ] **Step 1: Write the page**
+- [x] **Step 1: Write the page**
 
 ```vue
 <template>
@@ -312,7 +314,7 @@ const clips = [
 <style src="~/assets/css/work-case-study.css"></style>
 ```
 
-- [ ] **Step 2: Write the shared case-study stylesheet**
+- [x] **Step 2: Write the shared case-study stylesheet**
 
 ```css
 /* ── Case Study Pages ──
@@ -365,7 +367,7 @@ const clips = [
 }
 ```
 
-- [ ] **Step 3: Verify the page renders**
+- [x] **Step 3: Verify the page renders**
 
 ```bash
 npm run dev
@@ -377,7 +379,7 @@ Navigate to `http://localhost:3000/work/attendance-utilization` (adjust port if 
 - Only one video plays at a time (open browser dev tools, Elements panel, confirm only one `<video>` element exists in the DOM at a time — the `:key`-based remount means the previous one is fully removed, not just paused)
 - Toggle the site's dark/light theme control and confirm the page and video frame both switch correctly
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add app/pages/work/attendance-utilization.vue app/assets/css/work-case-study.css
@@ -397,7 +399,7 @@ git commit -m "feat: add attendance-utilization case-study page"
 
 **Context:** Same page shell as Task 3, different intro copy and a 2-entry `clips` array covering the overtime/validation flows.
 
-- [ ] **Step 1: Write the page**
+- [x] **Step 1: Write the page**
 
 ```vue
 <template>
@@ -433,7 +435,7 @@ const clips = [
 <style src="~/assets/css/work-case-study.css"></style>
 ```
 
-- [ ] **Step 2: Verify the page renders**
+- [x] **Step 2: Verify the page renders**
 
 ```bash
 npm run dev
@@ -441,7 +443,7 @@ npm run dev
 
 Navigate to `http://localhost:3000/work/overtime-governance`. Confirm both tabs (Add overtime, Partial failure) switch correctly, captions match the active tab, and dark/light theme both render correctly.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/pages/work/overtime-governance.vue
@@ -461,7 +463,7 @@ git commit -m "feat: add overtime-governance case-study page"
 
 **Context:** Same page shell pattern as Tasks 3 and 4, with a 2-entry `clips` array covering the adjustment and rest-day tooling.
 
-- [ ] **Step 1: Write the page**
+- [x] **Step 1: Write the page**
 
 ```vue
 <template>
@@ -497,7 +499,7 @@ const clips = [
 <style src="~/assets/css/work-case-study.css"></style>
 ```
 
-- [ ] **Step 2: Verify the page renders**
+- [x] **Step 2: Verify the page renders**
 
 ```bash
 npm run dev
@@ -505,7 +507,7 @@ npm run dev
 
 Navigate to `http://localhost:3000/work/workflow-standardization`. Confirm both tabs (Create adjustment, Mark rest) switch correctly, captions match, dark/light theme both render correctly.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add app/pages/work/workflow-standardization.vue
@@ -528,7 +530,7 @@ git commit -m "feat: add workflow-standardization case-study page"
 
 **Context:** Card 3 (Operations dashboard, `index.vue:54-73`) is explicitly untouched. The existing `.work-card` is a `<div>`; converting cards 1/2/4 to links means wrapping each card's contents in an `<a>` while keeping the `.work-card` class on that `<a>` so all existing card styling (border, shadow, hover transform) continues to apply unchanged — `<a>` accepts the same box-model CSS as `<div>`. This mirrors how `.blog-index-card` is already an `<a>` with card-like styling in `blogs/index.vue`.
 
-- [ ] **Step 1: Convert Card 1 to a link and add the badge**
+- [x] **Step 1: Convert Card 1 to a link and add the badge**
 
 In `app/pages/work/index.vue`, replace:
 
@@ -553,7 +555,7 @@ with:
 
 Then change the closing tag for this card from `</div>` to `</a>` — this is the `</div>` immediately after the closing `</div>` of `.work-shift` for this card (originally line 31 in the file as read).
 
-- [ ] **Step 2: Convert Card 2 to a link and add the badge**
+- [x] **Step 2: Convert Card 2 to a link and add the badge**
 
 Same pattern. Replace:
 
@@ -578,7 +580,7 @@ with:
 
 Change this card's closing `</div>` to `</a>`.
 
-- [ ] **Step 3: Convert Card 4 to a link and add the badge**
+- [x] **Step 3: Convert Card 4 to a link and add the badge**
 
 Replace:
 
@@ -603,7 +605,7 @@ with:
 
 Change this card's closing `</div>` to `</a>`. Card 3 (Operations dashboard) is left completely unchanged — still a plain `<div class="work-card">`.
 
-- [ ] **Step 4: Add link and badge styling to work.css**
+- [x] **Step 4: Add link and badge styling to work.css**
 
 Append to `app/assets/css/work.css`, after the existing `.work-card:hover, .work-card:focus-within` rule (around line 117):
 
@@ -637,7 +639,7 @@ Append to `app/assets/css/work.css`, after the existing `.work-card:hover, .work
 }
 ```
 
-- [ ] **Step 5: Verify in the browser**
+- [x] **Step 5: Verify in the browser**
 
 ```bash
 npm run dev
@@ -649,7 +651,7 @@ Navigate to `http://localhost:3000/work`. Confirm:
 - Existing card hover effect (shadow shift) still works on all 4 cards
 - Dark and light theme both render the badge correctly
 
-- [ ] **Step 6: Full site generation check**
+- [x] **Step 6: Full site generation check**
 
 ```bash
 npx nuxi generate
@@ -657,7 +659,7 @@ npx nuxi generate
 
 Expected: build completes with no errors, and the output lists all 3 new routes (`/work/attendance-utilization`, `/work/overtime-governance`, `/work/workflow-standardization`) alongside the existing routes.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add app/pages/work/index.vue app/assets/css/work.css
