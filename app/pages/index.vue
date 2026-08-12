@@ -44,6 +44,11 @@
     <!-- Blog Preview -->
     <p class="section-title">writing</p>
     <div class="blog-list">
+      <a class="blog-card" href="/blogs/learning-instead-of-watching">
+        <div class="blog-date">August 6, 2026</div>
+        <h3>They should be learning instead of watching</h3>
+        <p>What turns an ordinary person into a leader, why trust outlives rank, and what someone still owes the people who followed them when it all goes wrong.</p>
+      </a>
       <a class="blog-card" href="/blogs/remotion-llm-infographics">
         <div class="blog-date">July 24, 2026</div>
         <h3>Using an LLM to Draft Static Infographics with Remotion</h3>
