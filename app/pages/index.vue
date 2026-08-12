@@ -1,5 +1,6 @@
 <template>
   <div class="home-page">
+    <HomeStarField v-if="isDark" />
     <img src="/img/blueman-watermark.png" alt="" class="bg-watermark" aria-hidden="true">
 
     <!-- Hero -->
@@ -14,16 +15,16 @@
     </section>
 
     <!-- Art Gallery -->
-    <p class="section-title">art</p>
-    <div class="art-gallery">
+    <p class="section-title reveal">art</p>
+    <div class="art-gallery reveal">
       <div v-for="img in artImages" :key="img.alt" class="art-item">
         <img :src="img.src" :alt="img.alt">
       </div>
     </div>
 
     <!-- Video -->
-    <p class="section-title">video</p>
-    <section class="video-section">
+    <p class="section-title reveal">video</p>
+    <section class="video-section reveal">
       <div class="video-main">
         <div class="video-embed">
           <iframe
@@ -42,8 +43,8 @@
     </section>
 
     <!-- Blog Preview -->
-    <p class="section-title">writing</p>
-    <div class="blog-list">
+    <p class="section-title reveal">writing</p>
+    <div class="blog-list reveal">
       <a class="blog-card" href="/blogs/learning-instead-of-watching">
         <div class="blog-date">August 6, 2026</div>
         <h3>They should be learning instead of watching</h3>
@@ -65,6 +66,13 @@
 
 <script setup lang="ts">
 useHead({ title: 'tomatamagotato' })
+
+const { isDark } = useTheme()
+const { init: initReveal } = useScrollReveal('.reveal')
+
+onMounted(() => {
+  nextTick(() => initReveal())
+})
 
 const artImages = [
   { src: '/img/face.png', alt: 'face' },
