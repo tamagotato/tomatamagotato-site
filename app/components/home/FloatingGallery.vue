@@ -14,6 +14,7 @@
       class="floating-tile"
       :class="{ grabbed: grabbedIndex === i }"
       @mousedown="onGrabStart(i, $event)"
+      @touchstart="onGrabStart(i, $event)"
     >
       <img :src="img.src" :alt="img.alt" draggable="false">
     </div>
@@ -44,6 +45,7 @@ interface Tile {
   vrot: number
   w: number
   h: number
+  z: number
 }
 
 const props = defineProps<{ images: ImageItem[] }>()
@@ -76,6 +78,7 @@ let grabVy = 0
 let grabStartX = 0
 let grabStartY = 0
 let grabStartTime = 0
+let topZ = 1
 
 const CLICK_MAX_MOVE = 6
 const CLICK_MAX_DURATION = 300
@@ -86,6 +89,8 @@ const TILE_SIZE = 130
 const PUSH_RADIUS = 80
 const PUSH_STRENGTH = 0.05
 const SETTLE_RATE = 0.006
+const BOUNCE_SPIN_FACTOR = 1.2
+const GRAB_SPIN_STOP_MS = 5000
 
 function updateContainerRect() {
   if (!containerEl.value) return
@@ -108,34 +113,57 @@ function onContainerMouseLeave() {
   prevPointerY = -1000
 }
 
-function onGrabStart(i: number, e: MouseEvent) {
+function pointFromEvent(e: MouseEvent | TouchEvent): { x: number, y: number } | null {
+  if ('touches' in e) {
+    const touch = e.touches[0] ?? e.changedTouches[0]
+    if (!touch) return null
+    return { x: touch.clientX, y: touch.clientY }
+  }
+  return { x: e.clientX, y: e.clientY }
+}
+
+function onGrabStart(i: number, e: MouseEvent | TouchEvent) {
   if (inspectImage.value) return
+  const point = pointFromEvent(e)
+  if (!point) return
   e.preventDefault()
   const t = tiles[i]
   if (!t) return
   updateContainerRect()
   grabbedIndex.value = i
-  const px = e.clientX - containerRectLeft
-  const py = e.clientY - containerRectTop
+  // Grabbing brings a tile to front and keeps it there after release, so it
+  // doesn't get buried behind other tiles again once dropped.
+  topZ += 1
+  t.z = topZ
+  const grabbedEl = tileEls.value[i]
+  if (grabbedEl) grabbedEl.style.zIndex = String(t.z)
+  const px = point.x - containerRectLeft
+  const py = point.y - containerRectTop
   grabOffsetX = px - t.x
   grabOffsetY = py - t.y
   grabPrevX = px
   grabPrevY = py
   grabVx = 0
   grabVy = 0
-  grabStartX = e.clientX
-  grabStartY = e.clientY
+  grabStartX = point.x
+  grabStartY = point.y
   grabStartTime = performance.now()
   window.addEventListener('mousemove', onGrabMove)
   window.addEventListener('mouseup', onGrabEnd)
+  window.addEventListener('touchmove', onGrabMove, { passive: false })
+  window.addEventListener('touchend', onGrabEnd)
+  window.addEventListener('touchcancel', onGrabEnd)
 }
 
-function onGrabMove(e: MouseEvent) {
+function onGrabMove(e: MouseEvent | TouchEvent) {
   if (grabbedIndex.value === null) return
   const t = tiles[grabbedIndex.value]
   if (!t) return
-  const px = e.clientX - containerRectLeft
-  const py = e.clientY - containerRectTop
+  const point = pointFromEvent(e)
+  if (!point) return
+  e.preventDefault()
+  const px = point.x - containerRectLeft
+  const py = point.y - containerRectTop
 
   t.x = Math.min(Math.max(px - grabOffsetX, 0), containerWidth - t.w)
   t.y = Math.min(Math.max(py - grabOffsetY, 0), containerHeight - t.h)
@@ -146,11 +174,12 @@ function onGrabMove(e: MouseEvent) {
   grabPrevY = py
 }
 
-function onGrabEnd(e: MouseEvent) {
+function onGrabEnd(e: MouseEvent | TouchEvent) {
   const wasIndex = grabbedIndex.value
-  if (wasIndex !== null) {
+  const point = pointFromEvent(e)
+  if (wasIndex !== null && point) {
     const t = tiles[wasIndex]
-    const moved = Math.hypot(e.clientX - grabStartX, e.clientY - grabStartY)
+    const moved = Math.hypot(point.x - grabStartX, point.y - grabStartY)
     const duration = performance.now() - grabStartTime
     const isClick = moved <= CLICK_MAX_MOVE && duration <= CLICK_MAX_DURATION
 
@@ -171,6 +200,9 @@ function onGrabEnd(e: MouseEvent) {
   grabbedIndex.value = null
   window.removeEventListener('mousemove', onGrabMove)
   window.removeEventListener('mouseup', onGrabEnd)
+  window.removeEventListener('touchmove', onGrabMove)
+  window.removeEventListener('touchend', onGrabEnd)
+  window.removeEventListener('touchcancel', onGrabEnd)
 }
 
 function closeInspect() {
@@ -199,9 +231,11 @@ function layoutInit() {
       rot: (Math.random() - 0.5) * 10,
       vrot: (Math.random() - 0.5) * ROT_SPEED * 2,
       w,
-      h
+      h,
+      z: 1
     }
   })
+  topZ = 1
 }
 
 function onResize() {
@@ -222,6 +256,12 @@ function tick() {
 
   tiles.forEach((t, i) => {
     if (grabbedIndex.value === i) {
+      // Holding a spinning tile gradually kills its spin, but only fully stops it
+      // after being held for GRAB_SPIN_STOP_MS — a quick grab barely slows it down.
+      const heldMs = performance.now() - grabStartTime
+      const stopProgress = Math.min(heldMs / GRAB_SPIN_STOP_MS, 1)
+      t.vrot *= 1 - stopProgress * 0.06
+      t.rot += t.vrot
       const el = tileEls.value[i]
       if (el) el.style.transform = `translate(${t.x}px, ${t.y}px) rotate(${t.rot}deg)`
       return
@@ -253,10 +293,12 @@ function tick() {
     t.y += t.vy
     t.rot += t.vrot
 
-    if (t.x <= 0) { t.x = 0; t.dirX = Math.abs(t.dirX); t.vx = Math.abs(t.vx) }
-    if (t.x + t.w >= containerWidth) { t.x = containerWidth - t.w; t.dirX = -Math.abs(t.dirX); t.vx = -Math.abs(t.vx) }
-    if (t.y <= 0) { t.y = 0; t.dirY = Math.abs(t.dirY); t.vy = Math.abs(t.vy) }
-    if (t.y + t.h >= containerHeight) { t.y = containerHeight - t.h; t.dirY = -Math.abs(t.dirY); t.vy = -Math.abs(t.vy) }
+    // Bounce off a wall spins the tile a bit, harder for a faster impact —
+    // sign alternates with impact direction so it doesn't always spin the same way.
+    if (t.x <= 0) { t.x = 0; t.dirX = Math.abs(t.dirX); t.vx = Math.abs(t.vx); t.vrot -= t.vy * BOUNCE_SPIN_FACTOR }
+    if (t.x + t.w >= containerWidth) { t.x = containerWidth - t.w; t.dirX = -Math.abs(t.dirX); t.vx = -Math.abs(t.vx); t.vrot += t.vy * BOUNCE_SPIN_FACTOR }
+    if (t.y <= 0) { t.y = 0; t.dirY = Math.abs(t.dirY); t.vy = Math.abs(t.vy); t.vrot += t.vx * BOUNCE_SPIN_FACTOR }
+    if (t.y + t.h >= containerHeight) { t.y = containerHeight - t.h; t.dirY = -Math.abs(t.dirY); t.vy = -Math.abs(t.vy); t.vrot -= t.vx * BOUNCE_SPIN_FACTOR }
 
     const el = tileEls.value[i]
     if (el) {
@@ -293,6 +335,9 @@ onUnmounted(() => {
   window.removeEventListener('resize', onResize)
   window.removeEventListener('mousemove', onGrabMove)
   window.removeEventListener('mouseup', onGrabEnd)
+  window.removeEventListener('touchmove', onGrabMove)
+  window.removeEventListener('touchend', onGrabEnd)
+  window.removeEventListener('touchcancel', onGrabEnd)
   window.removeEventListener('keydown', onKeydown)
 })
 </script>
@@ -321,13 +366,13 @@ onUnmounted(() => {
   cursor: grab;
   will-change: transform;
   transition: box-shadow 0.2s, border-color 0.2s;
+  touch-action: none;
 }
 
 .floating-tile.grabbed {
   cursor: grabbing;
   box-shadow: 0 0 0 3px rgba(62, 198, 240, 0.5), 0 8px 28px rgba(62, 198, 240, 0.4);
   border-color: #3ec6f0;
-  z-index: 10;
 }
 
 .floating-tile img {
