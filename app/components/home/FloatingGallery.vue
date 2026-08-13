@@ -127,7 +127,7 @@ let hasTiltSignal = false
 
 // Shake detection: a spike in acceleration magnitude above SHAKE_THRESHOLD,
 // with a cooldown so one shake gesture doesn't retrigger every frame.
-const SHAKE_THRESHOLD = 12
+const SHAKE_THRESHOLD = 6
 const SHAKE_COOLDOWN_MS = 800
 const SHAKE_STOP_DURATION_MS = 1800
 let lastAccel = { x: 0, y: 0, z: 0 }
