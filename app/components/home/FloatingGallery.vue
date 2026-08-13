@@ -35,6 +35,8 @@
     >
       ↺ Motion
     </button>
+
+    <div v-if="debugShake" class="motion-debug">{{ debugShake }}</div>
   </div>
 </template>
 
@@ -68,6 +70,7 @@ const reduceMotion = ref(false)
 const inspectImage = ref<ImageItem | null>(null)
 const showTiltPrompt = ref(false)
 const loadedFlags = ref<boolean[]>(props.images.map(() => false))
+const debugShake = ref('')
 
 function onTileLoaded(i: number) {
   // Randomized delay instead of an instant flip — reveals land scattered
@@ -124,9 +127,9 @@ let hasTiltSignal = false
 
 // Shake detection: a spike in acceleration magnitude above SHAKE_THRESHOLD,
 // with a cooldown so one shake gesture doesn't retrigger every frame.
-const SHAKE_THRESHOLD = 22
-const SHAKE_COOLDOWN_MS = 1000
-const SHAKE_STOP_DURATION_MS = 900
+const SHAKE_THRESHOLD = 12
+const SHAKE_COOLDOWN_MS = 800
+const SHAKE_STOP_DURATION_MS = 1800
 let lastAccel = { x: 0, y: 0, z: 0 }
 let lastShakeTime = 0
 let shakeStopUntil = 0
@@ -272,10 +275,12 @@ function onDeviceMotion(e: DeviceMotionEvent) {
 
   const delta = Math.sqrt(dx * dx + dy * dy + dz * dz)
   const now = performance.now()
-  if (delta > SHAKE_THRESHOLD && now - lastShakeTime > SHAKE_COOLDOWN_MS) {
+  const triggered = delta > SHAKE_THRESHOLD && now - lastShakeTime > SHAKE_COOLDOWN_MS
+  if (triggered) {
     lastShakeTime = now
     shakeStopUntil = now + SHAKE_STOP_DURATION_MS
   }
+  debugShake.value = `delta=${delta.toFixed(1)} (threshold ${SHAKE_THRESHOLD})${triggered ? ' — SHAKE!' : ''}`
 }
 
 function startTiltListening() {
@@ -407,7 +412,7 @@ function tick() {
       // Shake damps spin toward zero rather than killing it instantly, so it
       // reads as a physical "settling" rather than a jarring stop. The window
       // auto-expires so bounces/throws after a shake can spin tiles again.
-      t.vrot *= 0.9
+      t.vrot *= 0.82
       if (Math.abs(t.vrot) < 0.001) t.vrot = 0
     }
 
@@ -557,6 +562,21 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .floating-gallery { height: 60vh; min-height: 320px; }
+}
+
+.motion-debug {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #7fffd4;
+  font-size: 0.7rem;
+  font-family: monospace;
+  pointer-events: none;
+  max-width: 90%;
 }
 
 .tilt-enable {
