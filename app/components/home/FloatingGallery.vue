@@ -105,7 +105,9 @@ const CLICK_MAX_DURATION = 300
 
 const SPEED = 0.12
 const ROT_SPEED = 0.015
-const TILE_SIZE = 130
+const TILE_SIZE_DESKTOP = 130
+const TILE_SIZE_MOBILE = 84
+const MOBILE_BREAKPOINT = 640
 const PUSH_RADIUS = 80
 const PUSH_STRENGTH = 0.05
 const SETTLE_RATE = 0.006
@@ -318,15 +320,31 @@ function layoutInit() {
   containerHeight = containerEl.value.clientHeight
   updateContainerRect()
 
-  tiles = props.images.map(() => {
-    const w = TILE_SIZE
-    const h = TILE_SIZE
+  const tileSize = containerWidth < MOBILE_BREAKPOINT ? TILE_SIZE_MOBILE : TILE_SIZE_DESKTOP
+
+  // Spawn on a jittered grid rather than pure random — guarantees every tile
+  // gets its own cell so they start spread out instead of clumping/stacking,
+  // especially on narrow viewports where random placement has little room to work with.
+  const cols = Math.max(1, Math.floor(containerWidth / tileSize))
+  const rows = Math.max(1, Math.ceil(props.images.length / cols))
+  const cellW = containerWidth / cols
+  const cellH = containerHeight / rows
+
+  tiles = props.images.map((_, i) => {
+    const w = tileSize
+    const h = tileSize
+    const col = i % cols
+    const row = Math.floor(i / cols)
+    const cellX = col * cellW
+    const cellY = row * cellH
+    const jitterX = Math.random() * Math.max(cellW - w, 0)
+    const jitterY = Math.random() * Math.max(cellH - h, 0)
     const angle = Math.random() * Math.PI * 2
     const dirX = Math.cos(angle)
     const dirY = Math.sin(angle)
     return {
-      x: Math.random() * Math.max(containerWidth - w, 1),
-      y: Math.random() * Math.max(containerHeight - h, 1),
+      x: Math.min(cellX + jitterX, Math.max(containerWidth - w, 0)),
+      y: Math.min(cellY + jitterY, Math.max(containerHeight - h, 0)),
       vx: dirX * SPEED,
       vy: dirY * SPEED,
       dirX,
@@ -339,13 +357,33 @@ function layoutInit() {
     }
   })
   topZ = 1
+
+  nextTick(() => {
+    tiles.forEach((t, i) => {
+      const el = tileEls.value[i]
+      if (el) {
+        el.style.width = `${t.w}px`
+        el.style.height = `${t.h}px`
+      }
+    })
+  })
 }
 
 function onResize() {
   if (!containerEl.value) return
+  const wasMobile = containerWidth < MOBILE_BREAKPOINT
   containerWidth = containerEl.value.clientWidth
   containerHeight = containerEl.value.clientHeight
   updateContainerRect()
+  const isMobile = containerWidth < MOBILE_BREAKPOINT
+
+  if (isMobile !== wasMobile) {
+    // Crossing the mobile/desktop breakpoint changes tile size — re-run the
+    // grid spawn rather than just clamping, or old positions/sizes go stale.
+    layoutInit()
+    return
+  }
+
   tiles.forEach((t) => {
     t.x = Math.min(t.x, Math.max(containerWidth - t.w, 0))
     t.y = Math.min(t.y, Math.max(containerHeight - t.h, 0))
@@ -493,7 +531,8 @@ onUnmounted(() => {
   border-radius: 10px;
   overflow: hidden;
   background: #edeae0;
-  border: 1px solid #ddd;
+  border: 1px solid #d8d3c4;
+  box-shadow: 0 6px 18px rgba(60, 50, 30, 0.18);
   cursor: grab;
   will-change: transform;
   transition: box-shadow 0.2s, border-color 0.2s, opacity 0.35s ease, scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -523,6 +562,7 @@ onUnmounted(() => {
 .theme-dark .floating-tile {
   background: #1a1a1a;
   border-color: #2a2a2a;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
 }
 
 .theme-dark .floating-tile.grabbed {
