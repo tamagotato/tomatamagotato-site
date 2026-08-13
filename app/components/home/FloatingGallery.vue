@@ -117,9 +117,9 @@ const GRAB_SPIN_STOP_MS = 5000
 
 // How fast a tile's ambient drift direction steers toward the tilt vector,
 // and how far a phone must tilt (degrees) before it's treated as "downhill".
-const TILT_STEER_RATE = 0.02
-const TILT_DEADZONE_DEG = 4
-const TILT_MAX_DEG = 30
+const TILT_STEER_RATE = 0.06
+const TILT_DEADZONE_DEG = 2
+const TILT_MAX_DEG = 18
 
 let tiltX = 0
 let tiltY = 0
