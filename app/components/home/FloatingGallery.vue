@@ -12,11 +12,11 @@
       :key="img.alt"
       ref="tileEls"
       class="floating-tile"
-      :class="{ grabbed: grabbedIndex === i }"
+      :class="{ grabbed: grabbedIndex === i, loaded: loadedFlags[i] }"
       @mousedown="onGrabStart(i, $event)"
       @touchstart="onGrabStart(i, $event)"
     >
-      <img :src="img.src" :alt="img.alt" draggable="false">
+      <img :src="img.src" :alt="img.alt" draggable="false" @load="onTileLoaded(i)">
     </div>
 
     <Transition name="inspect-fade">
@@ -25,6 +25,16 @@
         <img class="inspect-image" :src="inspectImage.src" :alt="inspectImage.alt" @click.stop>
       </div>
     </Transition>
+
+    <button
+      v-if="showTiltPrompt"
+      class="tilt-enable"
+      type="button"
+      aria-label="Enable tilt and shake motion"
+      @click="enableTilt"
+    >
+      ↺ Motion
+    </button>
   </div>
 </template>
 
@@ -56,6 +66,16 @@ const tileEls = ref<HTMLElement[]>([])
 const grabbedIndex = ref<number | null>(null)
 const reduceMotion = ref(false)
 const inspectImage = ref<ImageItem | null>(null)
+const showTiltPrompt = ref(false)
+const loadedFlags = ref<boolean[]>(props.images.map(() => false))
+
+function onTileLoaded(i: number) {
+  // Randomized delay instead of an instant flip — reveals land scattered
+  // across the gallery rather than a mechanical top-to-bottom/DOM-order sweep.
+  setTimeout(() => {
+    loadedFlags.value[i] = true
+  }, Math.random() * 400)
+}
 
 let tiles: Tile[] = []
 let rafId = 0
@@ -91,6 +111,25 @@ const PUSH_STRENGTH = 0.05
 const SETTLE_RATE = 0.006
 const BOUNCE_SPIN_FACTOR = 1.2
 const GRAB_SPIN_STOP_MS = 5000
+
+// How fast a tile's ambient drift direction steers toward the tilt vector,
+// and how far a phone must tilt (degrees) before it's treated as "downhill".
+const TILT_STEER_RATE = 0.02
+const TILT_DEADZONE_DEG = 4
+const TILT_MAX_DEG = 30
+
+let tiltX = 0
+let tiltY = 0
+let hasTiltSignal = false
+
+// Shake detection: a spike in acceleration magnitude above SHAKE_THRESHOLD,
+// with a cooldown so one shake gesture doesn't retrigger every frame.
+const SHAKE_THRESHOLD = 22
+const SHAKE_COOLDOWN_MS = 1000
+const SHAKE_STOP_DURATION_MS = 900
+let lastAccel = { x: 0, y: 0, z: 0 }
+let lastShakeTime = 0
+let shakeStopUntil = 0
 
 function updateContainerRect() {
   if (!containerEl.value) return
@@ -209,6 +248,70 @@ function closeInspect() {
   inspectImage.value = null
 }
 
+function onDeviceOrientation(e: DeviceOrientationEvent) {
+  const beta = e.beta ?? 0 // front-back tilt
+  const gamma = e.gamma ?? 0 // left-right tilt
+
+  const clamp = (v: number) => Math.max(-TILT_MAX_DEG, Math.min(TILT_MAX_DEG, v))
+  const gx = Math.abs(gamma) < TILT_DEADZONE_DEG ? 0 : clamp(gamma)
+  const gy = Math.abs(beta) < TILT_DEADZONE_DEG ? 0 : clamp(beta)
+
+  tiltX = gx / TILT_MAX_DEG
+  tiltY = gy / TILT_MAX_DEG
+  hasTiltSignal = tiltX !== 0 || tiltY !== 0
+}
+
+function onDeviceMotion(e: DeviceMotionEvent) {
+  const a = e.accelerationIncludingGravity
+  if (!a || a.x === null || a.y === null || a.z === null) return
+
+  const dx = a.x - lastAccel.x
+  const dy = a.y - lastAccel.y
+  const dz = a.z - lastAccel.z
+  lastAccel = { x: a.x, y: a.y, z: a.z }
+
+  const delta = Math.sqrt(dx * dx + dy * dy + dz * dz)
+  const now = performance.now()
+  if (delta > SHAKE_THRESHOLD && now - lastShakeTime > SHAKE_COOLDOWN_MS) {
+    lastShakeTime = now
+    shakeStopUntil = now + SHAKE_STOP_DURATION_MS
+  }
+}
+
+function startTiltListening() {
+  window.addEventListener('deviceorientation', onDeviceOrientation)
+  window.addEventListener('devicemotion', onDeviceMotion)
+}
+
+// iOS 13+ requires DeviceOrientationEvent.requestPermission(), which can only
+// be called from a user gesture — so we show a tap-to-enable button rather
+// than requesting on mount. Android/other browsers don't need this and start
+// listening immediately.
+function maybeInitTilt() {
+  const DOE = window.DeviceOrientationEvent as unknown as {
+    requestPermission?: () => Promise<'granted' | 'denied'>
+  }
+  if (typeof DOE?.requestPermission === 'function') {
+    showTiltPrompt.value = true
+  } else if ('DeviceOrientationEvent' in window) {
+    startTiltListening()
+  }
+}
+
+async function enableTilt() {
+  const DOE = window.DeviceOrientationEvent as unknown as {
+    requestPermission: () => Promise<'granted' | 'denied'>
+  }
+  try {
+    const result = await DOE.requestPermission()
+    if (result === 'granted') startTiltListening()
+  } catch {
+    // Permission API unavailable or rejected — leave tilt inactive, mouse/touch still work.
+  } finally {
+    showTiltPrompt.value = false
+  }
+}
+
 function layoutInit() {
   if (!containerEl.value) return
   containerWidth = containerEl.value.clientWidth
@@ -280,6 +383,17 @@ function tick() {
       }
     }
 
+    // Device tilt slowly steers the ambient drift direction itself, rather than
+    // pushing velocity directly — same settle system below just chases a moving
+    // target, so tilt and throws/pushes never fight each other.
+    if (hasTiltSignal) {
+      t.dirX += (tiltX - t.dirX) * TILT_STEER_RATE
+      t.dirY += (tiltY - t.dirY) * TILT_STEER_RATE
+      const dirLen = Math.hypot(t.dirX, t.dirY) || 1
+      t.dirX /= dirLen
+      t.dirY /= dirLen
+    }
+
     // Ease actual velocity back toward the tile's constant ambient speed in its
     // current drift direction — never toward zero. This is what keeps pushes
     // and throws feeling like inertia decaying to a resting drift, not friction
@@ -288,6 +402,14 @@ function tick() {
     const restVy = t.dirY * SPEED
     t.vx += (restVx - t.vx) * SETTLE_RATE
     t.vy += (restVy - t.vy) * SETTLE_RATE
+
+    if (performance.now() < shakeStopUntil) {
+      // Shake damps spin toward zero rather than killing it instantly, so it
+      // reads as a physical "settling" rather than a jarring stop. The window
+      // auto-expires so bounces/throws after a shake can spin tiles again.
+      t.vrot *= 0.9
+      if (Math.abs(t.vrot) < 0.001) t.vrot = 0
+    }
 
     t.x += t.vx
     t.y += t.vy
@@ -326,7 +448,14 @@ onMounted(() => {
     window.addEventListener('resize', onResize)
     if (!reduceMotion.value) {
       rafId = requestAnimationFrame(tick)
+      maybeInitTilt()
     }
+    // Cached images can finish loading before the @load listener attaches —
+    // catch those via `complete` so their tiles aren't stuck hidden.
+    tileEls.value.forEach((el, i) => {
+      const imgEl = el?.querySelector('img')
+      if (imgEl?.complete && !loadedFlags.value[i]) onTileLoaded(i)
+    })
   })
 })
 
@@ -339,6 +468,8 @@ onUnmounted(() => {
   window.removeEventListener('touchend', onGrabEnd)
   window.removeEventListener('touchcancel', onGrabEnd)
   window.removeEventListener('keydown', onKeydown)
+  window.removeEventListener('deviceorientation', onDeviceOrientation)
+  window.removeEventListener('devicemotion', onDeviceMotion)
 })
 </script>
 
@@ -365,8 +496,15 @@ onUnmounted(() => {
   border: 1px solid #ddd;
   cursor: grab;
   will-change: transform;
-  transition: box-shadow 0.2s, border-color 0.2s;
+  transition: box-shadow 0.2s, border-color 0.2s, opacity 0.35s ease, scale 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
   touch-action: none;
+  opacity: 0;
+  scale: 0.85;
+}
+
+.floating-tile.loaded {
+  opacity: 1;
+  scale: 1;
 }
 
 .floating-tile.grabbed {
@@ -412,10 +550,33 @@ onUnmounted(() => {
   aspect-ratio: 1;
   cursor: default;
   transform: none !important;
+  opacity: 1;
+  scale: 1;
+  transition: none;
 }
 
 @media (max-width: 768px) {
   .floating-gallery { height: 60vh; min-height: 320px; }
+}
+
+.tilt-enable {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 10;
+  padding: 8px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(62, 198, 240, 0.5);
+  background: rgba(245, 242, 234, 0.9);
+  color: #333;
+  font-size: 0.85rem;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+}
+
+.theme-dark .tilt-enable {
+  background: rgba(15, 15, 15, 0.85);
+  color: #f0ece4;
 }
 
 /* ── Inspect overlay ── */
