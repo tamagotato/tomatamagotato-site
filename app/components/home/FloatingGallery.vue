@@ -35,8 +35,6 @@
     >
       ↺ Motion
     </button>
-
-    <div v-if="debugShake" class="motion-debug">{{ debugShake }}</div>
   </div>
 </template>
 
@@ -70,7 +68,6 @@ const reduceMotion = ref(false)
 const inspectImage = ref<ImageItem | null>(null)
 const showTiltPrompt = ref(false)
 const loadedFlags = ref<boolean[]>(props.images.map(() => false))
-const debugShake = ref('')
 
 function onTileLoaded(i: number) {
   // Randomized delay instead of an instant flip — reveals land scattered
@@ -275,12 +272,10 @@ function onDeviceMotion(e: DeviceMotionEvent) {
 
   const delta = Math.sqrt(dx * dx + dy * dy + dz * dz)
   const now = performance.now()
-  const triggered = delta > SHAKE_THRESHOLD && now - lastShakeTime > SHAKE_COOLDOWN_MS
-  if (triggered) {
+  if (delta > SHAKE_THRESHOLD && now - lastShakeTime > SHAKE_COOLDOWN_MS) {
     lastShakeTime = now
     shakeStopUntil = now + SHAKE_STOP_DURATION_MS
   }
-  debugShake.value = `delta=${delta.toFixed(1)} (threshold ${SHAKE_THRESHOLD})${triggered ? ' — SHAKE!' : ''}`
 }
 
 function startTiltListening() {
@@ -562,21 +557,6 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .floating-gallery { height: 60vh; min-height: 320px; }
-}
-
-.motion-debug {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  z-index: 10;
-  padding: 6px 10px;
-  border-radius: 6px;
-  background: rgba(0, 0, 0, 0.75);
-  color: #7fffd4;
-  font-size: 0.7rem;
-  font-family: monospace;
-  pointer-events: none;
-  max-width: 90%;
 }
 
 .tilt-enable {
