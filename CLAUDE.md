@@ -33,6 +33,7 @@ CI (`.github/workflows/deploy.yml`) runs `npx nuxi generate` on push to `master`
 
 ## Known issues
 
+- **`FloatingGallery.vue` (home page art section) is a candidate for extraction into a reusable component.** It implements a self-contained zero-g physics sim — ambient drift with no friction (constant per-tile speed, direction persists through wall bounces), cursor-proximity push that decays back to that ambient drift rather than to zero, click-to-inspect (lightbox-style centered overlay), and drag-to-grab-and-throw with real momentum. The interaction model (not just the visuals) is the reusable part. Before lifting it out: replace hardcoded site tokens (`TILE_SIZE`, the olive/cyan hex colors, the `.theme-dark` ancestor-class assumption) with props/CSS variables, and write a short props/behavior doc since it'll be dropped into codebases without this repo's theming conventions.
 - **`post.css` has no light-theme variants.** It defines only dark colors, so the blog index and blog post pages render near-white text on the warm paper background when the toggle is set to light. This was masked before 2026-08-06 because the theme class never reached those pages correctly. Fixing it means either adding `.theme-light` rules to `post.css` or forcing dark on blog routes and hiding the toggle there. Not yet decided.
 - **Home page and blog index have not been through the visual identity pass.** Only the theme toggle and the Work page were addressed in the 2026-08-06 work.
 

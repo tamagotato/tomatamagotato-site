@@ -34,6 +34,8 @@ const STAR_COUNT = 46
 const PULL_RADIUS = 90
 const LINK_DIST = 130
 const GRID_SPACING = 60
+const GRID_PULL_RADIUS = 120
+const GRID_PULL_STRENGTH = 18
 const PULL_DEPTH_THRESHOLD = 0.45
 const PULSE_DEPTH_THRESHOLD = 0.6
 const SCROLL_PARALLAX = 0.04
@@ -110,22 +112,39 @@ function drawStatic() {
   }
 }
 
+function gridPoint(gx: number, gy: number, offsetY: number) {
+  const x = gx * GRID_SPACING
+  const y = ((gy * GRID_SPACING - offsetY) % (height + GRID_SPACING) + height + GRID_SPACING) % (height + GRID_SPACING) - GRID_SPACING
+  if (!pointerActive) return { x, y }
+  const dx = x - pointerX
+  const dy = y - pointerY
+  const dist = Math.sqrt(dx * dx + dy * dy)
+  if (dist > GRID_PULL_RADIUS || dist < 0.001) return { x, y }
+  const pull = (1 - Math.pow(dist / GRID_PULL_RADIUS, 0.55)) * GRID_PULL_STRENGTH
+  return { x: x - (dx / dist) * pull, y: y - (dy / dist) * pull }
+}
+
 function drawGrid() {
   if (!ctx) return
   const offsetY = scrollY * SCROLL_PARALLAX
+  const cols = Math.ceil(width / GRID_SPACING) + 1
+  const rows = Math.ceil((height + GRID_SPACING * 2) / GRID_SPACING) + 1
   ctx.strokeStyle = 'rgba(74,94,46,0.16)'
   ctx.lineWidth = 1
-  for (let x = 0; x <= width; x += GRID_SPACING) {
+  for (let gx = 0; gx <= cols; gx++) {
     ctx.beginPath()
-    ctx.moveTo(x, 0)
-    ctx.lineTo(x, height)
+    for (let gy = -1; gy <= rows; gy++) {
+      const p = gridPoint(gx, gy, offsetY)
+      if (gy === -1) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y)
+    }
     ctx.stroke()
   }
-  for (let y = -GRID_SPACING; y <= height + GRID_SPACING; y += GRID_SPACING) {
-    const yy = ((y - offsetY) % (height + GRID_SPACING) + height + GRID_SPACING) % (height + GRID_SPACING) - GRID_SPACING
+  for (let gy = -1; gy <= rows; gy++) {
     ctx.beginPath()
-    ctx.moveTo(0, yy)
-    ctx.lineTo(width, yy)
+    for (let gx = 0; gx <= cols; gx++) {
+      const p = gridPoint(gx, gy, offsetY)
+      if (gx === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y)
+    }
     ctx.stroke()
   }
 }

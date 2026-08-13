@@ -83,7 +83,7 @@ reference/fun-run-guidelines.jpg. follow our established CTA patterns</code></pr
 
     <p>Here's what came out the other end, and I still think it's kind of neat:</p>
 
-    <img src="/img/funrun-poster-fictional.png" alt="Rendered static poster: a mobile-formatted weather and safety advisory for a community fun run, with a letterhead band, headline, weather-guidance panel, red pickup-window block, call-to-action, and footer" width="1080" height="1920">
+    <img src="/img/funrun_poster_fictional.png" alt="Rendered static poster: a mobile-formatted weather and safety advisory for a community fun run, with a letterhead band, headline, weather-guidance panel, red pickup-window block, call-to-action, and footer" width="1080" height="1920">
 
     <p class="post-caption">The names, circular number, and contact details above are fictional, swapped in for this post. The layout, copy, and structure are exactly what the model shipped.</p>
 
