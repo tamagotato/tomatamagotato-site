@@ -35,6 +35,8 @@
     >
       ↺ Motion
     </button>
+
+    <div v-if="debugMotion" class="motion-debug">{{ debugMotion }}</div>
   </div>
 </template>
 
@@ -68,6 +70,7 @@ const reduceMotion = ref(false)
 const inspectImage = ref<ImageItem | null>(null)
 const showTiltPrompt = ref(false)
 const loadedFlags = ref<boolean[]>(props.images.map(() => false))
+const debugMotion = ref('')
 
 function onTileLoaded(i: number) {
   // Randomized delay instead of an instant flip — reveals land scattered
@@ -259,6 +262,8 @@ function onDeviceOrientation(e: DeviceOrientationEvent) {
   tiltX = gx / TILT_MAX_DEG
   tiltY = gy / TILT_MAX_DEG
   hasTiltSignal = tiltX !== 0 || tiltY !== 0
+
+  debugMotion.value = `orient: beta=${beta.toFixed(1)} gamma=${gamma.toFixed(1)} | signal=${hasTiltSignal}`
 }
 
 function onDeviceMotion(e: DeviceMotionEvent) {
@@ -276,6 +281,7 @@ function onDeviceMotion(e: DeviceMotionEvent) {
     lastShakeTime = now
     shakeStopUntil = now + SHAKE_STOP_DURATION_MS
   }
+  debugMotion.value += ` | motion delta=${delta.toFixed(1)}`
 }
 
 function startTiltListening() {
@@ -293,8 +299,12 @@ function maybeInitTilt() {
   }
   if (typeof DOE?.requestPermission === 'function') {
     showTiltPrompt.value = true
+    debugMotion.value = 'waiting: needs iOS permission tap'
   } else if ('DeviceOrientationEvent' in window) {
     startTiltListening()
+    debugMotion.value = 'listening: no events yet'
+  } else {
+    debugMotion.value = 'unsupported: no DeviceOrientationEvent in window'
   }
 }
 
@@ -557,6 +567,21 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .floating-gallery { height: 60vh; min-height: 320px; }
+}
+
+.motion-debug {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #7fffd4;
+  font-size: 0.7rem;
+  font-family: monospace;
+  pointer-events: none;
+  max-width: 90%;
 }
 
 .tilt-enable {
