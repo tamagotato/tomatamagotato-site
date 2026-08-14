@@ -4,6 +4,13 @@
     <p class="blog-index-subtitle">whatever i feel like. no consistent theme. just honest pieces.</p>
     <ul class="blog-index-list">
       <li>
+        <a class="blog-index-card" href="/blogs/stones-throw">
+          <time>August 14, 2026</time>
+          <h2>Stone's throw</h2>
+          <p>English is my second language, and "earnest" always felt like a thin word to me. An evening spent working out what it actually asks of a person, and whether it fits.</p>
+        </a>
+      </li>
+      <li>
         <a class="blog-index-card" href="/blogs/learning-instead-of-watching">
           <time>August 6, 2026</time>
           <h2>They should be learning instead of watching</h2>
