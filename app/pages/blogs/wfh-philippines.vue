@@ -4,7 +4,7 @@
     <section class="report-hero">
       <div class="report-hero-content">
         <span class="report-badge">Sentiment Analysis Report</span>
-        <h1>How Filipino Workers <span class="highlight">Lost WFH</span>, and Who They Blame</h1>
+        <h1>How Filipino Workers <span class="ink-underline">Lost WFH<svg viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2,8 C18,3 32,10 50,6 C66,3 82,9 98,5" /></svg></span>, and Who They Blame</h1>
         <p class="report-hero-sub">Five years of grassroots sentiment across Reddit, Twitter/X, Facebook, and TikTok, from pandemic adaptation to strategic resignation.</p>
         <div class="report-hero-stats">
           <div class="report-hero-stat">
@@ -68,7 +68,7 @@
       <!-- Blame Hierarchy -->
       <div class="report-section" id="blame">
         <div class="report-section-number">02</div>
-        <h2>The blame hierarchy</h2>
+        <h2>The <span class="ink-circle">blame<svg viewBox="0 0 120 60" preserveAspectRatio="none" aria-hidden="true"><path d="M22,32 C14,14 38,2 62,3 C92,4 114,15 109,32 C105,49 79,58 55,55 C28,52 11,42 16,28 C19,20 24,29 22,32 C21,34 25,31 22,32" /></svg></span> hierarchy</h2>
         <p>Workers online assign blame in a consistent order: <strong>PEZA first, corporations second, coworkers third</strong>.</p>
         <div class="report-ranked-stack">
           <div v-for="blame in blameItems" :key="blame.rank" class="report-ranked-bar" :style="{ '--width': blame.width }" @click="toggleExpand($event)">

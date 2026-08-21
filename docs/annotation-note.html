@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Annotation Note, Boldr reference</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@800;900&family=Roboto+Mono:wght@400;500&family=Inter:wght@400;600;800&family=Kalam:wght@400;700&display=swap">
+<style>
+  :root {
+    /* Boldr tokens, from boldr-brand-2025.md */
+    --sun: #FFD22C;
+    --boldr-orange: #FF6B00;
+    --dusk: #252D49;
+    --dusk-deep: #1A1F2E;
+    --nimbus: #75808A;
+    --stratus: #DDE4E3;
+    --cirrus: #FAF7F2;
+    --flame: #D1001C;
+    --orange-900: #7a3300;
+
+    /* note-specific */
+    --note-stock: var(--sun);
+    --note-label: #8a4b00;
+    --ink-warning: var(--orange-900);
+    --ink-info: var(--dusk);
+
+    /* quote note: same paper family, different stock + orientation so it
+       reads as a distinct object rather than a competing severity signal */
+    --quote-stock: #E4E9E6;
+    --quote-stock-line: rgba(37, 45, 73, 0.09);
+    --quote-ink: var(--dusk);
+    --quote-source: #5c6a68;
+
+    --page: #1a1817;
+    --panel: #231f1e;
+    --page-text: #ddd5cc;
+    --page-muted: #9a8e82;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 48px 32px 80px;
+    background: var(--page);
+    color: var(--page-text);
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; }
+  .eyebrow {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 11px; font-weight: 500; letter-spacing: 1.6px;
+    text-transform: uppercase; color: var(--boldr-orange);
+  }
+  h1 { font-size: 34px; font-weight: 800; letter-spacing: -0.4px; margin: 8px 0 10px; }
+  h2 {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 11px; font-weight: 500; letter-spacing: 1.4px;
+    text-transform: uppercase; color: #7d7368;
+    margin: 48px 0 18px; padding-top: 22px; border-top: 1px solid #332c28;
+  }
+  p.lede { color: var(--page-muted); max-width: 720px; margin: 0 0 8px; }
+  .caveat {
+    padding: 14px 18px; background: #2a2320;
+    border-left: 3px solid var(--boldr-orange);
+    font-size: 13.5px; line-height: 1.6; color: #c9beb4; margin: 24px 0 0;
+  }
+  .row { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; align-items: start; }
+  .cell-cap {
+    font-family: 'Roboto Mono', monospace; font-size: 10.5px;
+    letter-spacing: 1px; text-transform: uppercase; color: #6d6459; margin-bottom: 10px;
+  }
+  .stage { padding: 18px 6px 24px; }
+  .mono { font-family: 'Roboto Mono', monospace; }
+
+  /* ============================================================
+     THE ANNOTATION NOTE
+     ============================================================ */
+  .note {
+    position: relative;
+    max-width: 360px;
+    padding: 20px 22px 22px;
+    /* stock: sun + ripple texture.
+       NOTE: this repeating-radial-gradient is a STAND-IN.
+       The real Change in Ripples motif is an SVG. Swap it and recompute contrast. */
+    background-color: var(--note-stock);
+    background-image: repeating-radial-gradient(
+      circle at 118% 8%,
+      rgba(255, 107, 0, 0.16) 0 1px,
+      rgba(0, 0, 0, 0) 1px 13px
+    );
+    /* square corners are the point: paper is not uniformly rounded */
+    border-radius: 0;
+    /* two layers: tight contact line + wider drop = resting on a surface */
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.30), 0 10px 20px -6px rgba(0, 0, 0, 0.55);
+    transform: rotate(-1.1deg);
+  }
+  /* curled corner implies thickness */
+  .note::after {
+    content: "";
+    position: absolute; right: 0; bottom: 0; width: 26px; height: 26px;
+    background: linear-gradient(135deg,
+      rgba(0,0,0,0) 50%, rgba(0,0,0,0.13) 50%, rgba(0,0,0,0.26) 100%);
+  }
+  .note__label {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 11px; font-weight: 500; letter-spacing: 1.4px;
+    text-transform: uppercase; color: var(--note-label);
+    margin: 0 0 8px;
+  }
+  .note__body { font-size: 14px; line-height: 1.57; color: var(--dusk); margin: 0; }
+
+  /* --- the severity stamp: ink pressed into the paper --- */
+  .note__stamp {
+    display: inline-block;
+    font-family: 'Big Shoulders Display', 'Haettenschweiler', sans-serif;
+    font-size: 21px; font-weight: 900; letter-spacing: 1.6px; line-height: 1;
+    padding: 8px 14px;
+    color: var(--note-stock);          /* word knocked out to stock */
+    /* multiply lets the ripple read through, so the ink belongs to the paper */
+    mix-blend-mode: multiply;
+    opacity: 0.82;
+    /* rotation DISAGREES with the sheet's -1.1deg. That is what sells it */
+    transform: rotate(-2.5deg);
+    transform-origin: left center;
+    margin-bottom: 14px;
+  }
+  .note--warning .note__stamp { background: var(--ink-warning); }
+  .note--info    .note__stamp { background: var(--ink-info); }
+
+  /* --- optional decorative attachments. They carry NO meaning. --- */
+  .note__tape {
+    position: absolute; top: -10px; right: 24px; width: 60px; height: 19px;
+    background: rgba(250, 247, 242, 0.32);
+    border-left: 1px solid rgba(255,255,255,0.20);
+    border-right: 1px solid rgba(255,255,255,0.20);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.16);
+    transform: rotate(2deg);
+  }
+  .note__pin {
+    position: absolute; top: -8px; left: 20px; width: 17px; height: 17px;
+    border-radius: 50%; background: var(--nimbus);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.45),
+                inset -2px -2px 3px rgba(0,0,0,0.25),
+                inset 2px 2px 3px rgba(255,255,255,0.38);
+  }
+  /* if a pin is present, hang the rotation off it so it reads as physics */
+  .note--pinned { transform: rotate(-2.2deg); transform-origin: 20px 0; }
+
+  /* --- narrow widths: rotation must collapse or the note overflows --- */
+  @media (max-width: 640px) {
+    .note, .note--pinned { transform: rotate(0); }
+    /* the stamp keeps its own angle */
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .note, .note--pinned, .note__stamp { transition: none; }
+  }
+
+  /* ============================================================
+     THE QUOTE NOTE
+     Same paper construction as .note (square corners, two-layer contact
+     shadow, curled corner), deliberately different stock and rotation so
+     it never reads as a third severity state. No stamp: quotes carry no
+     severity to signal.
+     ============================================================ */
+  .quote-note {
+    position: relative;
+    max-width: 460px;
+    padding: 26px 28px 24px;
+    background-color: var(--quote-stock);
+    /* faint ruled-paper lines instead of the warm ripple texture, so the
+       two stocks are legible as different objects even in greyscale */
+    background-image: repeating-linear-gradient(
+      var(--quote-stock) 0 27px,
+      var(--quote-stock-line) 27px 28px
+    );
+    border-radius: 0;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.22), 0 10px 20px -6px rgba(0, 0, 0, 0.42);
+    /* opposite lean from the info/warning note (-1.1deg), and the corner
+       curl moves to bottom-left to match */
+    transform: rotate(1.4deg);
+  }
+  .quote-note::after {
+    content: "";
+    position: absolute; left: 0; bottom: 0; width: 26px; height: 26px;
+    background: linear-gradient(225deg,
+      rgba(0,0,0,0) 50%, rgba(0,0,0,0.10) 50%, rgba(0,0,0,0.20) 100%);
+  }
+  .quote-note__body {
+    /* Kalam over a script face like Caveat: unjoined letterforms read
+       at paragraph length, where connected cursive strokes stop scanning
+       as words and start scanning as shapes. */
+    font-family: 'Kalam', 'Bradley Hand', cursive;
+    font-weight: 400;
+    font-size: 19px;
+    line-height: 1.6;
+    color: var(--quote-ink);
+    margin: 0;
+  }
+  .quote-note__source {
+    display: block;
+    margin-top: 12px;
+    font-family: 'Roboto Mono', monospace;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--quote-source);
+  }
+  .quote-note__source::before { content: "\2014  "; }
+
+  @media (max-width: 640px) {
+    .quote-note { transform: rotate(0); }
+  }
+
+  /* ============================================================
+     HAND-MARK EMPHASIS FAMILY
+     Alternative to color-swapped/gradient-clipped text for emphasizing a
+     word in a heading or short phrase. Three marks, same construction
+     rules: real SVG path (never a CSS border/background trick), a slight
+     organic wobble in the path data, draw-on animation gated by
+     prefers-reduced-motion, ink color pulled from the page's accent
+     token. Cyan #3ec6f0 here matches the Blueman mascot ink used on the
+     Work page; swap it for the host page's own accent if there is one.
+     ============================================================ */
+
+  .mark-demo-word {
+    position: relative;
+    display: inline-block;
+    font-family: 'Inter', sans-serif;
+    font-weight: 800;
+    font-size: 30px;
+    color: var(--page-text);
+  }
+
+  /* 1. Underline — shipped on the Work page as .ink-underline and the WFH
+     report hero as .report-hero h1 .ink-underline. Shown here for parity,
+     not a new mark. */
+  .mark-underline svg {
+    position: absolute; left: -3%; bottom: -0.16em; width: 106%; height: 0.28em;
+    overflow: visible; pointer-events: none;
+  }
+  .mark-underline path {
+    fill: none; stroke: #3ec6f0; stroke-width: 6; stroke-linecap: round;
+    stroke-dasharray: 320; stroke-dashoffset: 320;
+    animation: mark-draw 0.7s cubic-bezier(0.65,0,0.35,1) 0.25s forwards;
+  }
+
+  /* 2. Strike-and-rewrite — erase the original word with a wobbled line,
+     hand-letter the replacement above it in the handwritten ink font.
+     Two-stage animation: strike draws first, replacement fades/rises in
+     after, so it reads as a correction rather than simultaneous clutter. */
+  .mark-strike { color: var(--page-muted); }
+  .mark-strike svg {
+    position: absolute; left: -3%; top: 48%; width: 106%; height: 0.4em;
+    overflow: visible; pointer-events: none;
+  }
+  .mark-strike path {
+    fill: none; stroke: #D1001C; stroke-width: 5; stroke-linecap: round;
+    stroke-dasharray: 320; stroke-dashoffset: 320;
+    animation: mark-draw 0.5s cubic-bezier(0.65,0,0.35,1) 0.2s forwards;
+  }
+  .mark-strike__rewrite {
+    position: absolute; left: 2%; top: -1.05em; white-space: nowrap;
+    font-family: 'Kalam', cursive; font-weight: 700; font-size: 0.72em;
+    color: #3ec6f0; transform: rotate(-3deg);
+    opacity: 0; animation: mark-rewrite-in 0.4s ease-out 0.75s forwards;
+  }
+  @keyframes mark-rewrite-in {
+    from { opacity: 0; transform: rotate(-3deg) translateY(6px); }
+    to   { opacity: 1; transform: rotate(-3deg) translateY(0); }
+  }
+
+  /* 3.5 Erase-and-rewrite — distinct from strike-and-rewrite above. The
+     strike keeps the old word legible with a line through it (a visible
+     correction). This one actually obscures the old word under a dense
+     scribble, as if scratched out with a pen, then the old word fades
+     out under the scribble and the replacement appears in its place.
+     Three-stage timing: scribble draws over the word, word fades out
+     once the scribble is dense enough to read as "gone," then the
+     replacement rises in where the scribble was. */
+  /* .mark-erase is an inline-block sized by an invisible spacer sized to
+     whichever word is wider, so neither the scribble nor the replacement
+     word can overflow the box regardless of which word is longer. The old
+     word, the scribble, and the replacement are all absolutely positioned
+     inside that box and share the same left edge and baseline. */
+  .mark-erase {
+    position: relative;
+    display: inline-block;
+    vertical-align: bottom;
+  }
+  .mark-erase__spacer {
+    visibility: hidden;
+    white-space: nowrap;
+    font-family: 'Kalam', cursive;
+    font-weight: 700;
+  }
+  .mark-erase__old {
+    position: absolute; left: 0; top: 0;
+    display: inline-block;
+    white-space: nowrap;
+    /* fade completes exactly when the scribble finishes drawing
+       (0.15s delay + 0.5s duration = 0.65s), so the word is never seen
+       vanishing "for no reason" ahead of the scratch that covers it */
+    animation: mark-erase-fade 0.2s ease-in 0.45s forwards;
+  }
+  .mark-erase__old svg {
+    /* sized relative to .mark-erase__old (the old word) specifically,
+       not the outer box — the outer box is sized for the WIDER of the
+       two words, but the scribble must only span the old word's width
+       or it either falls short of covering "WFH" or overshoots past it */
+    position: absolute; left: -4%; top: -10%; width: 108%; height: 130%;
+    overflow: visible; pointer-events: none;
+  }
+  .mark-erase path {
+    fill: none; stroke: #1a1a1a; stroke-width: 6; stroke-linecap: round;
+    /* dasharray must match the path's real length (~215 units for the
+       scribble below) or the dash outruns the path and the stroke snaps
+       to "fully drawn" long before the offset animation finishes,
+       leaving part of the word unscratched when the fade kicks in */
+    stroke-dasharray: 215; stroke-dashoffset: 215;
+    animation: mark-draw 0.5s cubic-bezier(0.65,0,0.35,1) 0.15s forwards;
+  }
+  @keyframes mark-erase-fade {
+    to { opacity: 0; }
+  }
+  .mark-erase__rewrite {
+    position: absolute; left: 0; top: 0;
+    white-space: nowrap;
+    font-family: 'Kalam', cursive; font-weight: 700; font-size: 1em;
+    color: #3ec6f0; transform: rotate(-2deg);
+    transform-origin: left top;
+    /* starts once the scribble has fully covered the old word (0.65s),
+       with a short beat so the two never overlap mid-transition */
+    opacity: 0; animation: mark-rewrite-in 0.4s ease-out 0.75s forwards;
+  }
+
+  /* 3. Circle in colored pen — an SVG ellipse-ish path drawn around the
+     word, same wobble and draw-on behavior as the underline. */
+  .mark-circle svg {
+    position: absolute; left: -26%; top: -24%; width: 152%; height: 148%;
+    overflow: visible; pointer-events: none;
+  }
+  .mark-circle path {
+    fill: none; stroke: #FF6B00; stroke-width: 4.5; stroke-linecap: round;
+    stroke-dasharray: 300; stroke-dashoffset: 300;
+    animation: mark-draw 0.9s cubic-bezier(0.65,0,0.35,1) 0.2s forwards;
+  }
+
+  @keyframes mark-draw { to { stroke-dashoffset: 0; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mark-underline path, .mark-strike path, .mark-circle path, .mark-erase path {
+      animation: none; stroke-dashoffset: 0;
+    }
+    .mark-strike__rewrite, .mark-erase__rewrite {
+      animation: none; opacity: 1;
+    }
+    .mark-strike__rewrite { transform: rotate(-3deg); }
+    .mark-erase__rewrite { transform: rotate(-2deg); }
+    .mark-erase__old { animation: none; opacity: 0; }
+  }
+
+  .grayscale { filter: grayscale(1); }
+
+  table { border-collapse: collapse; width: 100%; font-size: 13.5px; margin-top: 4px; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid #2a2523; }
+  th {
+    font-family: 'Roboto Mono', monospace; font-size: 10.5px; font-weight: 500;
+    letter-spacing: 1px; text-transform: uppercase; color: #7d7368;
+    background: var(--panel); border-bottom: none;
+  }
+  td.pass { font-family: 'Roboto Mono', monospace; font-size: 11.5px; color: #9ecb85; }
+  td.fail { font-family: 'Roboto Mono', monospace; font-size: 11.5px; color: #e0a08f; }
+  td.ratio { font-family: 'Roboto Mono', monospace; color: var(--page-text); }
+  ol { color: var(--page-muted); max-width: 760px; padding-left: 22px; }
+  ol li { margin-bottom: 10px; }
+  code {
+    font-family: 'Roboto Mono', monospace; font-size: 12.5px;
+    background: var(--panel); padding: 1px 5px; color: #c9beb4;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="eyebrow">Boldr design reference</div>
+  <h1>The Annotation Note</h1>
+  <p class="lede">A callout that reads as paper slapped onto the page. Severity is ink pressed into the sheet, not a coloured border on a rounded box.</p>
+
+  <div class="caveat">
+    <strong style="color:#ddd5cc;">The ripple texture in this file is a CSS stand-in.</strong>
+    The real Change in Ripples motif is an Adobe Illustrator Blend Tool construction and
+    no SVG exists in this repo. Swap it in and recompute every contrast ratio below, because
+    the texture sits under the ink and shifts the effective background.
+  </div>
+
+  <h2>The note</h2>
+  <div class="row">
+    <div>
+      <div class="cell-cap">info</div>
+      <div class="stage">
+        <div class="note note--info">
+          <div class="note__stamp">INFO</div>
+          <p class="note__label">The PEZA constraint</p>
+          <p class="note__body">Companies in special economic zones received income tax holidays and duty-free importation.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="cell-cap">warning</div>
+      <div class="stage">
+        <div class="note note--warning">
+          <div class="note__stamp">WARNING</div>
+          <p class="note__label">Competitive pressure</p>
+          <p class="note__body">India's major IT companies pushed hard on return to office in 2023 and 2024.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="cell-cap">hue stripped &mdash; the decisive test</div>
+      <div class="stage grayscale">
+        <div class="note note--warning">
+          <div class="note__stamp">WARNING</div>
+          <p class="note__label">Competitive pressure</p>
+          <p class="note__body">India's major IT companies pushed hard on return to office in 2023 and 2024.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>The quote note &mdash; same family, no severity</h2>
+  <div class="row">
+    <div>
+      <div class="cell-cap">pull quote</div>
+      <div class="stage">
+        <div class="quote-note">
+          <p class="quote-note__body">Workers do not treat WFH as a perk. They treat it as compensation for infrastructure that does not work, which is why losing it feels like being punished for a problem they did not cause.</p>
+          <span class="quote-note__source">r/phcareers, 2024</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="cell-cap">hue stripped</div>
+      <div class="stage grayscale">
+        <div class="quote-note">
+          <p class="quote-note__body">Workers do not treat WFH as a perk. They treat it as compensation for infrastructure that does not work.</p>
+          <span class="quote-note__source">r/phcareers, 2024</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="cell-cap">next to a warning note &mdash; must not read as a third state</div>
+      <div class="stage" style="display:flex; gap:20px; flex-wrap:wrap; align-items:flex-start;">
+        <div class="quote-note" style="max-width:280px;">
+          <p class="quote-note__body" style="font-size:22px;">Same family, different object.</p>
+          <span class="quote-note__source">source</span>
+        </div>
+        <div class="note note--warning" style="max-width:280px;">
+          <div class="note__stamp">WARNING</div>
+          <p class="note__label">Competitive pressure</p>
+          <p class="note__body">Tilts the opposite way on purpose.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Hand-mark emphasis &mdash; alternative to color-swapped headings</h2>
+  <p class="lede">Four marks, one family. Reload the page to replay the draw-on animation &mdash; each stroke fills in as if drawn live, not a fade.</p>
+  <div class="row">
+    <div>
+      <div class="cell-cap">1. underline &mdash; shipped (Work page, WFH report hero)</div>
+      <div class="stage">
+        <p style="font-size:30px; font-weight:800; margin:0;">I build the <span class="mark-demo-word mark-underline">rules<svg viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2,8 C18,3 32,10 50,6 C66,3 82,9 98,5" /></svg></span></p>
+      </div>
+    </div>
+    <div>
+      <div class="cell-cap">2. strike-and-rewrite &mdash; new (old word stays legible)</div>
+      <div class="stage">
+        <p style="font-size:30px; font-weight:800; margin:0;">We lost <span class="mark-demo-word mark-strike">WFH<svg viewBox="0 0 100 12" preserveAspectRatio="none" aria-hidden="true"><path d="M2,7 C20,5 40,9 55,6 C70,4 85,8 98,6" /></svg><span class="mark-strike__rewrite">everything</span></span></p>
+      </div>
+    </div>
+    <div>
+      <div class="cell-cap">2.5 erase-and-rewrite &mdash; new (old word gets scribbled out and hidden)</div>
+      <div class="stage">
+        <p style="font-size:30px; font-weight:800; margin:0;">We lost <span class="mark-demo-word mark-erase"><span class="mark-erase__spacer">everything</span><span class="mark-erase__old">WFH<svg viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"><path d="M5,9 C22,24 12,3 34,17 C31,26 52,6 48,20 C68,9 61,25 88,11 C79,4 94,22 70,14 C77,27 42,7 58,19 C36,10 44,24 16,13 C28,5 8,20 5,9" /></svg></span><span class="mark-erase__rewrite">everything</span></span></p>
+      </div>
+    </div>
+    <div>
+      <div class="cell-cap">3. circle in colored pen &mdash; new</div>
+      <div class="stage">
+        <p style="font-size:30px; font-weight:800; margin:0;">Who they <span class="mark-demo-word mark-circle">blame<svg viewBox="0 0 120 60" preserveAspectRatio="none" aria-hidden="true"><path d="M22,32 C14,14 38,2 62,3 C92,4 114,15 109,32 C105,49 79,58 55,55 C28,52 11,42 16,28 C19,20 24,29 22,32 C21,34 25,31 22,32" /></svg></span></p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Optional attachments &mdash; decorative only</h2>
+  <div class="row">
+    <div>
+      <div class="cell-cap">taped</div>
+      <div class="stage">
+        <div class="note note--info">
+          <div class="note__tape"></div>
+          <div class="note__stamp">INFO</div>
+          <p class="note__label">The PEZA constraint</p>
+          <p class="note__body">Tape is anonymous and permanent. It suits a note meant to stay put.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="cell-cap">pinned &mdash; rotation hangs off the pin</div>
+      <div class="stage">
+        <div class="note note--info note--pinned">
+          <div class="note__pin"></div>
+          <div class="note__stamp">INFO</div>
+          <p class="note__label">The PEZA constraint</p>
+          <p class="note__body">Transform origin sits at the pin, so the tilt reads as physics rather than decoration.</p>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="cell-cap">bare &mdash; the default</div>
+      <div class="stage">
+        <div class="note note--info">
+          <div class="note__stamp">INFO</div>
+          <p class="note__label">The PEZA constraint</p>
+          <p class="note__body">Attachments draw attention. A page full of them stops meaning anything, so default to the bare note.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Measured contrast</h2>
+  <table>
+    <thead><tr><th>Pair</th><th>Ratio</th><th>Verdict</th></tr></thead>
+    <tbody>
+      <tr><td>WARNING word, stock on effective ink <code>#924808</code></td><td class="ratio">4.60:1</td><td class="pass">AAA large, AA normal</td></tr>
+      <tr><td>INFO word, stock on effective ink <code>#4c4412</code></td><td class="ratio">6.77:1</td><td class="pass">AAA large, AA normal</td></tr>
+      <tr><td>Body text <code>#252D49</code> on stock <code>#FFD22C</code></td><td class="ratio">9.36:1</td><td class="pass">AAA normal</td></tr>
+      <tr><td>Label <code>#8a4b00</code> on stock</td><td class="ratio">4.70:1</td><td class="pass">AA normal</td></tr>
+      <tr><td>Rejected: <code>flame #D1001C</code> as warning ink</td><td class="ratio">3.43:1</td><td class="fail">AA large only, fails AAA</td></tr>
+      <tr><td>Rejected: any ink at <code>opacity 0.68</code></td><td class="ratio">2.91:1</td><td class="fail">fails the 3.0 floor</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Rules</h2>
+  <ol>
+    <li><strong>Never let the label repeat the stamp.</strong> WARNING above COMPETITIVE RISK says the same thing twice. If the stamp carries the severity word, the label drops it.</li>
+    <li><strong>Rotation collapses below 640px.</strong> Set <code>rotate(0)</code> or the note overflows its column. The stamp keeps its own angle.</li>
+    <li><strong>Attachments are rare and carry no meaning.</strong> Severity always comes from the stamp. A red dot and a grey dot are the same dot in greyscale.</li>
+    <li><strong>The stamp is the only severity channel.</strong> No left border, no additional icon, no per-state background. One device, one job.</li>
+    <li><strong>Minimum stamp type is 21px.</strong> Below that the knocked-out word loses its counters and the multiply blend muddies it.</li>
+    <li><strong>The warning ink is brown, and that is correct.</strong> Multiply over yellow drags red toward brown. Every true red that survived the blend failed WCAG.</li>
+  </ol>
+
+  <h2>Open items</h2>
+  <ol>
+    <li>The ripple texture is a stand-in. Recompute all ratios against the real SVG.</li>
+    <li>The stock inverts a sanctioned pairing. <code>boldr-brand-2025.md</code> lists Sun on Boldr Orange; this note uses sun stock with orange ripples. Needs a brand decision.</li>
+    <li><code>boldr-brand-2025.md</code> line 74 assigns Big Shoulders <strong>800</strong> to callouts. The stamp uses 900. Either change it or document the exception.</li>
+    <li>The text-wrap system is unbuilt: margin note, float with square and tight wrap, block interrupt, column overlap, each needing a declared narrow-width collapse.</li>
+  </ol>
+
+</div>
+</body>
+</html>
