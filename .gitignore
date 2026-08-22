@@ -6,3 +6,5 @@ dist/
 .playwright-mcp/
 *.png
 !public/**/*.png
+
+.worktrees/
